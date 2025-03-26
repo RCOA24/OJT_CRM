@@ -2,10 +2,13 @@
 
 <!-- Flash Message -->
 @if (session('success'))
-    <div id="flashMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+    <div id="flashMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4 text-center mx-auto max-w-md">
         {{ session('success') }}
     </div>
 @endif
+
+<!-- Flash Message Container -->
+<div id="flashMessageContainer" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"></div>
 
 <tbody>
     @forelse($users as $user)
@@ -92,11 +95,11 @@
         const flashMessage = document.createElement("div");
         flashMessage.className = `flash-message bg-${type === "success" ? "green" : "red"}-100 border border-${type === "success" ? "green" : "red"}-400 text-${type === "success" ? "green" : "red"}-700 px-4 py-2 rounded mb-4`;
         flashMessage.textContent = message;
-        document.body.prepend(flashMessage);
+        document.getElementById("flashMessageContainer").appendChild(flashMessage);
 
         setTimeout(() => {
             flashMessage.remove();
-        }, 5000); // Auto-hide after 5 seconds
+        }, 5000);
     };
 
     document.body.addEventListener("click", function (event) {
@@ -157,7 +160,7 @@
             const response = await fetch(`http://192.168.1.9:2030/api/Users/update/${userId}`, {
                 method: "PUT",
                 headers: {
-                    "Authorization": "1234", // Ensure this matches your API requirement
+                    "Authorization": "1234",
                     "Accept": "application/json",
                     "Content-Type": "application/json"
                 },
@@ -172,46 +175,8 @@
             }
 
             showFlashMessage("User updated successfully!");
-            location.reload(); // Reload the page to reflect changes
-        } catch (error) {
-            console.error("Network error:", error);
-            showFlashMessage("Failed to connect to the server!", "error");
-        }
-    });
-
-    document.getElementById("registerUserForm").addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const formData = {
-            firstName: document.getElementById("registerFirstName").value,
-            middleName: document.getElementById("registerMiddleName").value,
-            lastName: document.getElementById("registerLastName").value,
-            phoneNumber: document.getElementById("registerPhoneNumber").value,
-            userName: document.getElementById("registerUserName").value,
-            email: document.getElementById("registerEmail").value,
-            password: document.getElementById("registerPassword").value
-        };
-
-        try {
-            const response = await fetch("http://192.168.1.9:2030/api/Users/register", {
-                method: "POST",
-                headers: {
-                    "Authorization": "1234", // Ensure this matches your API requirement
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            });
-
-            const responseData = await response.json();
-
-            if (!response.ok) {
-                showFlashMessage("Registration failed: " + (responseData.message || "Unknown error"), "error");
-                return;
-            }
-
-            showFlashMessage("User registered successfully!");
-            location.reload(); // Reload the page to reflect changes
+            document.getElementById("editUserModal").classList.add("hidden");
+            location.reload();
         } catch (error) {
             console.error("Network error:", error);
             showFlashMessage("Failed to connect to the server!", "error");
@@ -222,8 +187,8 @@
     const flashMessage = document.getElementById("flashMessage");
     if (flashMessage) {
         setTimeout(() => {
-            flashMessage.classList.add("hidden"); // Hide the message
-        }, 5000); // 5 seconds
+            flashMessage.classList.add("hidden");
+        }, 5000);
     }
 });
 </script>

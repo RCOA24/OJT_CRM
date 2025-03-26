@@ -5,13 +5,20 @@
 @include('components.sidebar')
 
 @section('content')
-<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<div id="flashMessage" class="hidden bg-green-500 text-white text-center py-2 rounded mb-4">
+    User successfully registered!
+</div>
 
 <div class="container mx-auto p-4">
     <div class="bg-white shadow rounded-lg p-4">
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+          
             <h2 class="text-lg font-semibold">Users</h2>
+
+          
             <div class="flex gap-2 items-center">
+               
                 <input type="text" id="searchUser" placeholder="Search Username" class="border rounded-lg px-4 py-2 w-full md:w-64">
                 <script>
                     document.getElementById("searchUser").addEventListener("input", function () {
@@ -29,7 +36,7 @@
                     });
                 </script>
                 
-
+              
                <!-- Add User Button -->
                 <button onclick="document.getElementById('userModal').classList.remove('hidden')" 
                 class="bg-[#102B3C] text-white px-4 py-2 rounded-lg flex items-center">
@@ -40,7 +47,7 @@
                 </button>
                 <!-- Add User Button -->
 
-
+  
         
             
 
@@ -69,54 +76,93 @@
                 </x-modal>
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
-    const userModal = document.getElementById("userModal");
-
-    document.getElementById("registerUser").addEventListener("click", async function () {
-        const formData = {
-            firstName: document.getElementById("first_name").value,
-            middleName: document.getElementById("middle_name").value,
-            lastName: document.getElementById("last_name").value,
-            phoneNumber: document.getElementById("phone_number").value,
-            userName: document.getElementById("username").value,
-            email: document.getElementById("email").value,
-            password: document.getElementById("password").value,
-            confirmPassword: document.getElementById("confirm_password").value,
-            status: "Active"
-        };
-
-        try {
-            const response = await fetch("http://192.168.1.9:2030/api/Users/register", {
-                method: "POST",
-                headers: {
-                    "Authorization": "1234", // Include your token
-                    "Accept": "application/json",
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(formData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                alert("Registration failed: " + (errorData.message || "Unknown error"));
-                return;
-            }
-
-            alert("User registered successfully!");
-            location.reload();
-        } catch (error) {
-            console.error("Network error:", error);
-            alert("Failed to connect to the server!");
-        }
-    });
-
-    // Close modal when clicking outside
-    document.addEventListener("click", function (event) {
-        if (event.target === userModal) {
-            userModal.classList.add("hidden");
-        }
-    });
-});
-
+                        const userModal = document.getElementById("userModal");
+                        const flashMessage = document.getElementById("flashMessage");
+                    
+                        document.getElementById("registerUser").addEventListener("click", async function () {
+                            const last_name = document.getElementById("last_name").value;
+                            const first_name = document.getElementById("first_name").value;
+                            const middle_name = document.getElementById("middle_name").value;
+                            const phone_number = document.getElementById("phone_number").value;
+                            const username = document.getElementById("username").value;
+                            const email = document.getElementById("email").value;
+                            const password = document.getElementById("password").value;
+                            const confirm_password = document.getElementById("confirm_password").value;
+                    
+                            const formData = {
+                                firstName: first_name,
+                                middleName: middle_name,
+                                lastName: last_name,
+                                phoneNumber: phone_number,
+                                status: "Active",
+                                userName: username,
+                                email: email,
+                                password: password,
+                                confirmPassword: confirm_password
+                            };
+                    
+                            try {
+                                const response = await fetch("http://192.168.1.9:2030/api/Users/register", {
+                                    method: "POST",
+                                    headers: {
+                                        "Authorization": "1234",
+                                        "Accept": "application/json",
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify(formData)
+                                });
+                    
+                                if (!response.ok) {
+                                    const errorData = await response.json();
+                                    console.error("Error:", errorData);
+                                    alert("Registration failed: " + (errorData.message || "Unknown error"));
+                                    return;
+                                }
+                    
+                                const result = await response.json();
+                                console.log("Success:", result);
+                    
+                                // Show flash message
+                                flashMessage.classList.remove("hidden");
+                    
+                                // Clear form fields
+                                document.getElementById("last_name").value = "";
+                                document.getElementById("first_name").value = "";
+                                document.getElementById("middle_name").value = "";
+                                document.getElementById("phone_number").value = "";
+                                document.getElementById("username").value = "";
+                                document.getElementById("email").value = "";
+                                document.getElementById("password").value = "";
+                                document.getElementById("confirm_password").value = "";
+                    
+                                // Hide flash message after 3 seconds
+                                setTimeout(() => {
+                                    flashMessage.classList.add("hidden");
+                                }, 3000);
+                    
+                                // Close modal on successful registration
+                                userModal.classList.add("hidden");
+                    
+                            } catch (error) {
+                                console.error("Network error:", error);
+                                alert("Failed to connect to the server!");
+                            }
+                        });
+                    
+                        // Close modal when clicking the "Cancel" button
+                        document.body.addEventListener("click", function (event) {
+                            if (event.target.closest("#closeEditModal")) {
+                                userModal.classList.add("hidden");
+                            }
+                        });
+                    
+                        // Close modal when clicking outside of it
+                        document.body.addEventListener("click", function (event) {
+                            if (event.target === userModal) {
+                                userModal.classList.add("hidden");
+                            }
+                        });
+                    });
                     </script>
                     
                     
@@ -127,6 +173,7 @@
 
             </div>
         </div>
+      
         <div class="overflow-x-auto">
             <table class="w-full border-collapse border text-left text-sm">
                 <thead>
