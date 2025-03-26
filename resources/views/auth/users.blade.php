@@ -175,18 +175,6 @@
         </div>
       
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse border text-left text-sm">
-                <thead>
-                    <tr class="bg-gray-100">
-                        <th class="p-3"><input type="checkbox"></th>
-                        <th class="p-3">Full Name</th>
-                        <th class="p-3">Phone Number</th>
-                        <th class="p-3">Username</th>
-                        <th class="p-3">Email</th>
-                        <th class="p-3">Status</th>
-                        <th class="p-3">Actions</th>
-                    </tr>
-                </thead>
                 <tbody id="usersTable">
                     @include('partials.users-table')
                 </tbody>
