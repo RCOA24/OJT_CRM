@@ -32,7 +32,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('password.reset') }}">
+        <form method="POST" action="{{ route('password.update', ['token' => $token]) }}">
             @csrf
             <div class="mb-5">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Token</label>
@@ -44,22 +44,16 @@
             </div>
             <div class="mb-5">
                 <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
-                <input type="password" name="newPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter new password" required>
+                <input type="password" name="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter new password" required>
             </div>
             <div class="mb-5">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                <input type="password" name="confirmPassword" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Confirm new password" required>
+                <input type="password" name="password_confirmation" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Confirm new password" required>
             </div>
             <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
                 Reset Password
             </button>
         </form>
-        <p>You will be redirected shortly...</p>
-        <script>
-            setTimeout(function() {
-                window.location.href = "{{ route('login') }}"; // Redirect to login page after timer
-            }, {{ session('timer', 5) * 1000 }}); // Default to 5 seconds if timer is not set
-        </script>
     </div>
 </div>
 @endsection

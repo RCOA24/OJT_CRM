@@ -5,8 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 
-// Users Route
+Route::get('/users', function () {
+    return view('auth.users'); // Ensure this matches the correct path
+})->name('users.view');
+
 Route::get('/users', [UserController::class, 'index'])->name('users');
+
 
 // Redirect Home Page to Login
 Route::get('/', function () {
@@ -25,7 +29,6 @@ Route::middleware('guest')->group(function () {
     // Reset Password Routes
     Route::get('/reset-password', [PasswordResetLinkController::class, 'createResetPassword'])->name('password.reset.form');
     Route::post('/reset-password', [PasswordResetLinkController::class, 'resetPassword'])->name('password.reset');
-    Route::get('/reset-password/{token}', [PasswordResetLinkController::class, 'createResetPassword'])->name('password.reset.form');
 });
 
 // Logout Route
@@ -39,11 +42,12 @@ Route::get('/dashboard', function () {
     return view('auth.dashboard'); // Make sure you have auth.dashboard.blade.php
 })->name('dashboard');
 
-// User Management Routes
+// Update user
 Route::get('/users/{id}', [UserController::class, 'getUser']);
-Route::put('/users/update/{id}', [UserController::class, 'updateUser'])->name('user.update');
-Route::post('/users/register', [UserController::class, 'register'])->name('user.register');
 
+Route::put('/users/update/{id}', [UserController::class, 'updateUser'])->name('user.update');
+
+Route::post('/users/register', [AuthenticatedSessionController::class, 'register']);
 
 // Include authentication-related routes (registration, password reset, etc.)
 require __DIR__.'/auth.php';

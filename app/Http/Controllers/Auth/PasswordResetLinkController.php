@@ -55,20 +55,12 @@ class PasswordResetLinkController extends Controller
             ]);
 
             if ($response->successful()) {
-                $token = $response->json()['message'] ?? null; // Extract token from the response
-                if (!$token) {
-                    Log::error('Token missing in API response', ['response' => $response->body()]);
-                    return back()->withErrors(['email' => 'An error occurred while processing your request. Please try again later.']);
-                }
-
-                Log::info('Redirecting to reset password page', ['url' => route('password.reset.form', ['token' => $token])]);
-                return redirect()->route('password.reset.form', ['token' => $token])
-                                 ->with('success', 'Token received. Redirecting to reset password page.');
+                return back()->with('status', 'Password reset link sent to your email.')
+                             ->with('success', 'The password reset email has been sent successfully.');
             } elseif ($response->status() === 404) {
                 return back()->withErrors(['email' => 'The email address is not registered in our system. Please ensure you entered the correct email.']);
             } else {
                 $errorMessage = $response->json()['message'] ?? 'An error occurred.';
-                Log::error('Unexpected API error', ['status' => $response->status(), 'body' => $response->body()]);
                 return back()->withErrors(['email' => 'Error: ' . $errorMessage]);
             }
         } catch (\Exception $e) {
@@ -79,13 +71,5 @@ class PasswordResetLinkController extends Controller
             ]);
             return back()->withErrors(['email' => 'An unexpected error occurred. Please try again later.']);
         }
-    }
-
-    /**
-     * Display the reset password form.
-     */
-    public function createResetPassword(string $token): View
-    {
-        return view('auth.reset-password', ['token' => $token]);
     }
 }
