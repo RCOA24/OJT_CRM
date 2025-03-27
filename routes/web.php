@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 Route::get('/users', function () {
     return view('auth.users'); // Ensure this matches the correct path
@@ -27,8 +28,8 @@ Route::middleware('guest')->group(function () {
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
 
     // Reset Password Routes
-    Route::get('/reset-password', [PasswordResetLinkController::class, 'createResetPassword'])->name('password.reset.form');
-    Route::post('/reset-password', [PasswordResetLinkController::class, 'resetPassword'])->name('password.reset');
+    Route::get('/reset-password/{token}/{email}', [ResetPasswordController::class, 'create'])->name('password.reset.form');
+    Route::put('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('password.update');
 });
 
 // Logout Route
