@@ -82,74 +82,19 @@
                 
             
 <!-- Clients Menu Item -->
-<div x-data="{ openMenu: false }">
-    <a href="#" 
-       class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
-       x-bind:class="activeItem.includes('/clients') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-       @click.prevent="openMenu = !openMenu; activeItem = '/clients'">
-        
-        <!-- Icon -->
-        <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-            <x-clientsicon class="w-6 h-6" x-bind:class="activeItem.includes('/clients') ? 'text-[#ED1C24]' : 'text-white'" />
-        </span>
+<a href="{{ route('clients.list') }}" 
+   class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
+   x-bind:class="activeItem.includes('/clients') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
+   @click.prevent="activeItem = '/clients'; window.location.href='{{ route('clients.list') }}'">
 
-        <!-- Text (Hidden when Sidebar is Collapsed) -->
-        <span class="ml-2 transition-all duration-300" x-bind:class="open ? 'block' : 'hidden'">Clients</span>   
+    <!-- Icon -->
+    <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+        <x-clientsicon class="w-6 h-6" x-bind:class="activeItem.includes('/clients') ? 'text-[#ED1C24]' : 'text-white'" />
+    </span>
 
-        <!-- Dropdown Indicator (Hidden when Sidebar is Collapsed) -->
-        <span class="ml-auto transition-transform duration-300 text-white" 
-              x-bind:class="open ? (openMenu ? 'rotate-90 block' : 'block') : 'hidden'">
-            &#9654;
-        </span>
-    </a>
-
-<!-- Submenu (Visible Icons when Sidebar is Collapsed) -->
-<div x-show="openMenu" x-collapse 
-     class="ml-4 border-l border-gray-400 pl-4 mt-4 space-y-4"
-     x-transition.duration.300ms>
-
-    <a href="{{ route('dashboard') }}" 
-       class="flex items-center py-3 rounded-lg relative transition-colors duration-300"
-       x-bind:class="activeItem === '/clients/contact-persons' ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-       @click.prevent="activeItem = '/clients/contact-persons'; window.location.href='{{ route('dashboard') }}'">
-        <x-clientslisticon class="w-7 h-7 mr-4" 
-                           x-bind:class="activeItem === '/clients/contact-persons' ? 'text-[#ED1C24]' : 'text-white'" />
-        <span x-bind:class="open ? 'pl-2 block text-sm' : 'hidden'">Client Lists</span>
-        <span x-show="activeItem === '/clients/contact-persons'" 
-              class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ED1C24] transition-all duration-300 ease-in-out">
-        </span>
-    </a>
-
-    <a href="{{ route('dashboard') }}" 
-       class="flex items-center py-3 rounded-lg relative transition-colors duration-300"
-       x-bind:class="activeItem === '/clients/company' ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-       @click.prevent="activeItem = '/clients/company'; window.location.href='{{ route('dashboard') }}'">
-        <x-companyicon class="w-7 h-7 mr-4" 
-                       x-bind:class="activeItem === '/clients/company' ? 'text-[#ED1C24]' : 'text-white'" />
-        <span x-bind:class="open ? 'pl-2 block text-sm' : 'hidden'">Company</span>
-        <span x-show="activeItem === '/clients/company'" 
-              class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ED1C24] transition-all duration-300 ease-in-out">
-        </span>
-    </a>
-
-    <a href="{{ route('dashboard') }}" 
-       class="flex items-center py-3 rounded-lg relative transition-colors duration-300"
-       x-bind:class="activeItem === '/clients/address' ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-       @click.prevent="activeItem = '/clients/address'; window.location.href='{{ route('dashboard') }}'">
-        <x-addressicon class="w-7 h-7 mr-4" 
-                       x-bind:class="activeItem === '/clients/address' ? 'text-[#ED1C24]' : 'text-white'" />
-        <span x-bind:class="open ? 'pl-2 block text-sm' : 'hidden'">Address</span>
-        <span x-show="activeItem === '/clients/address'" 
-              class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ED1C24] transition-all duration-300 ease-in-out">
-        </span>
-    </a>
-
-</div>
-
-
-
-
-</div>
+    <!-- Text (Hidden when Sidebar is Collapsed) -->
+    <span class="ml-2 transition-all duration-300" x-bind:class="open ? 'block' : 'hidden'">Clients</span>
+</a>
 
 
                 
@@ -282,25 +227,7 @@
     
     <nav class="flex flex-col p-4 space-y-3">
         <a href="{{ route('dashboard') }}" class="text-lg font-semibold block">Dashboard</a>
-
-        <!-- Clients Dropdown -->
-        <div x-data="{ open: false }">
-            <a href="#" 
-               class="flex items-center justify-between text-lg font-semibold block"
-               @click.prevent="open = !open">
-                <span>Clients</span>
-                <span class="transition-transform duration-300" 
-                      x-bind:class="open ? 'rotate-90' : ''">
-                    &#9654;
-                </span>
-            </a>
-            <div x-show="open" x-collapse class="pl-4 mt-2 space-y-2" x-transition.opacity.duration.300ms>
-                <a href="#" class="block text-gray-700 hover:text-[#ED1C24] transition-colors duration-300">Contact Persons</a>
-                <a href="#" class="block text-gray-700 hover:text-[#ED1C24] transition-colors duration-300">Company</a>
-                <a href="#" class="block text-gray-700 hover:text-[#ED1C24] transition-colors duration-300">Address</a>
-            </div>
-        </div>
-
+        <a href="{{ route('clients.list') }}" class="text-lg font-semibold block">Clients</a>
         <a href="{{ route('users') }}" class="text-lg font-semibold block">Users</a>
         <a href="#" class="text-lg font-semibold block">Settings</a>
         <a href="#" class="text-lg font-semibold block">Notifications</a>

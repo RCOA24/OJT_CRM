@@ -3,62 +3,77 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class ResetPasswordController extends Controller
 {
-    public function create(string $token, string $email): View
+    /**
+     * Display the reset password form.
+     */
+    public function create(string $token): View
     {
-        return view('auth.reset-password', ['token' => $token, 'email' => $email]);
+        dd($token);
+        return view('auth.reset-password', ['token' => $token]);
     }
+    
 
-    public function resetPassword(Request $request): RedirectResponse
+    /**
+     * Handle the reset password request.
+     */
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|confirmed|min:8',
+            'password' => 'required|min:8|confirmed',
         ]);
 
         try {
-            // Send the reset password request to the API
+            $payload = [
+                'token' => $request->token,
+                'email' => strtolower($request->email),
+                'newPassword' => $request->password,
+                'confirmPassword' => $request->password_confirmation,
+            ];
+
+            Log::info('Reset Password API Request Payload', $payload);
+
             $response = Http::withHeaders([
-                'Authorization' => '1234', // Authorization token as per Swagger
+                'Authorization' => '1234',
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-            ])->put('http://192.168.1.9:2030/api/Auth/reset-password', [
-                'token' => $request->token,
-                'email' => $request->email,
-                'newPassword' => $request->password,
-            ]);
+            ])->post('http://192.168.1.9:2030/api/Auth/reset-password', $payload);
 
-            // Log the API response for debugging
             Log::info('Reset Password API Response', [
                 'status' => $response->status(),
-                'body' => $response->body(),
+                'body' => $response->json() ?? $response->body(),
             ]);
 
             if ($response->successful()) {
-                // Redirect to the login page with a success message
-                return redirect()->route('login')->with('success', 'Password reset successfully. Please log in with your new password.');
-            } else {
-                // Log the error and return to the reset password form with an error message
-                $errorMessage = $response->json()['message'] ?? 'An error occurred.';
-                return back()->withErrors(['error' => 'Error: ' . $errorMessage])->withInput();
+                $responseData = $response->json();
+                $message = $responseData['message'] ?? 'Password reset successfully.';
+
+                Log::info('Password reset successful', ['message' => $message]);
+                return redirect()->route('login')->with('success', $message);
             }
+
+            $errorMessage = $response->json()['message'] ?? 'Failed to reset password.';
+            Log::error('Password reset failed', [
+                'status' => $response->status(),
+                'error' => $errorMessage,
+            ]);
+
+            return back()->withErrors(['email' => $errorMessage]);
         } catch (\Exception $e) {
-            // Log the exception for debugging
-            Log::error('Reset Password API Error', [
+            Log::error('Reset Password Error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
             ]);
-
-            // Return to the reset password form with an error message
-            return back()->withErrors(['error' => 'An unexpected error occurred. Please try again later.'])->withInput();
+            return back()->withErrors(['email' => 'An unexpected error occurred. Please try again later.']);
         }
     }
 }
