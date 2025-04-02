@@ -10,7 +10,7 @@
     User successfully registered!
 </div>
 
-<div class="container mx-auto p-4">
+<div class="container mx-auto p-4 pt-20">
     <div class="bg-white shadow rounded-lg p-4">
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
           

@@ -53,5 +53,9 @@ Route::post('/users/register', [AuthenticatedSessionController::class, 'register
 
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
 
+Route::get('/settings', function () {
+    return view('settings.index');
+})->name('settings');
+
 // Include authentication-related routes (registration, password reset, etc.)
 require __DIR__.'/auth.php';

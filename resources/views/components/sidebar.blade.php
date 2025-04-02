@@ -115,10 +115,10 @@
             </a>
 
                 
-            <a href="#" 
+            <a href="{{ route('settings') }}" 
             class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
             x-bind:class="activeItem.includes('/settings') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-            @click.prevent="activeItem = '/settings'; window.location.href='#'">
+            @click.prevent="activeItem = '/settings'; window.location.href='{{ route('settings') }}'">
 
             <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
                 <x-settingsicon class="w-6 h-6" x-bind:class="activeItem.includes('/settings') ? 'text-[#ED1C24]' : 'text-white'" />
@@ -229,7 +229,7 @@
         <a href="{{ route('dashboard') }}" class="text-lg font-semibold block">Dashboard</a>
         <a href="{{ route('clients.list') }}" class="text-lg font-semibold block">Clients</a>
         <a href="{{ route('users') }}" class="text-lg font-semibold block">Users</a>
-        <a href="#" class="text-lg font-semibold block">Settings</a>
+        <a href="{{ route('settings') }}" class="text-lg font-semibold block">Settings</a>
         <a href="#" class="text-lg font-semibold block">Notifications</a>
 
         <!-- Log-out Form (Same Function as Button) -->
