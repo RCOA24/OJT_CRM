@@ -29,8 +29,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
 
     // Reset Password Routes
-    Route::get('/reset-password/{token}', [ResetPasswordController::class, 'create'])->name('password.reset.form');
-    Route::put('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update'); // Change to PUT
+    Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset.form');
+
+    Route::put('/reset-password', [NewPasswordController::class, 'store'])->name('password.update'); // Change to PUT
 });
 
 // Logout Route

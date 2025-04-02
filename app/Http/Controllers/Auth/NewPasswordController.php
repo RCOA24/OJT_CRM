@@ -14,9 +14,22 @@ class NewPasswordController extends Controller
     /**
      * Display the password reset view.
      */
-    public function create(Request $request): View
+    public function create(string $token): View
     {
-        return view('auth.reset-password', ['request' => $request]);
+        // Decode the Base64-encoded token into the email
+        $email = base64_decode($token);
+
+        // Log the decoded email for debugging
+        Log::info('Decoded Reset Password Token', ['token' => $token, 'email' => $email]);
+       
+        // Ensure the decoded email is valid
+        if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            Log::error('Reset Password: Invalid Base64 token or email');
+            abort(400, 'Invalid reset token.');
+        }
+
+        // Pass the original token and decoded email to the view
+        return view('auth.reset-password', compact('token', 'email'));
     }
 
     /**
@@ -27,7 +40,6 @@ class NewPasswordController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'token' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8', 'confirmed'],
         ]);
@@ -35,7 +47,6 @@ class NewPasswordController extends Controller
         try {
             // Prepare the payload to match ResetPasswordDto schema
             $payload = [
-                'token' => $request->token,
                 'email' => $request->email,
                 'newPassword' => $request->password,
                 'confirmPassword' => $request->password_confirmation,
@@ -44,17 +55,20 @@ class NewPasswordController extends Controller
             // Log the payload for debugging
             Log::info('Reset Password Request Payload', $payload);
 
-            // Send the request to the API
+            // Send the request to the API with a timeout
             $resetResponse = Http::withHeaders([
-                'Authorization' => '1234',
+                'Authorization' => '1234', // Ensure this token is valid
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-            ])->post('http://192.168.1.9:2030/api/Auth/reset-password', $payload);
+            ])->timeout(10) // Set a timeout of 10 seconds
+              ->post('http://192.168.1.9:2030/api/Auth/reset-password', $payload);
 
             // Log the API response for debugging
             Log::info('Reset Password API Response', [
                 'status' => $resetResponse->status(),
-                'body' => $resetResponse->json() ?? $resetResponse->body(),
+                'headers' => $resetResponse->headers(),
+                'body' => $resetResponse->body(),
+                'json' => $resetResponse->json() ?? null,
             ]);
 
             // Handle the API response
@@ -68,11 +82,19 @@ class NewPasswordController extends Controller
                 Log::error('Reset Password Failed', [
                     'status' => $resetResponse->status(),
                     'error' => $errorMessage,
+                    'response_body' => $resetResponse->body(),
                 ]);
                 return back()->withErrors(['email' => $errorMessage]);
             }
+        } catch (\Illuminate\Http\Client\RequestException $e) {
+            // Log request-specific exceptions
+            Log::error('Password Reset Request Exception', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return back()->withErrors(['email' => 'Unable to connect to the server. Please try again later.']);
         } catch (\Exception $e) {
-            // Log the exception for debugging
+            // Log general exceptions
             Log::error('Password Reset Error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),

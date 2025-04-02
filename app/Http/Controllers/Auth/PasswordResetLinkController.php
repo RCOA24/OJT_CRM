@@ -50,15 +50,7 @@ class PasswordResetLinkController extends Controller
             ]);
 
             if ($response->successful()) {
-                $responseData = $response->json();
-                $token = $responseData['message'] ?? null;
-
-                if ($token) {
-                    return redirect()->route('password.reset.form', ['token' => $token, 'email' => $email])
-                        ->with('success', 'Password reset link sent successfully.');
-                } else {
-                    return back()->withErrors(['email' => 'Token not found in the API response.']);
-                }
+                return back()->with('success', 'Password reset link sent successfully. Please check your email.');
             }
 
             return back()->withErrors(['email' => 'Failed to send password reset link.']);

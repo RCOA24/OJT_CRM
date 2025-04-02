@@ -18,10 +18,10 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('password.update') }}">
-            @csrfw  
-            {{-- <input type="hidden" name="token" value="{{ $token }}">
-            <input type="hidden" name="email" value="{{ $email }}"> --}}
+        <form method="POST" action="{{ route('password.store') }}"> <!-- Use POST method -->
+            @csrf
+
+            <input type="hidden" name="email" value="{{ $email }}">
 
             <div class="mb-5">
                 <label class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
