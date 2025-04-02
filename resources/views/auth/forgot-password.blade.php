@@ -3,45 +3,59 @@
 @section('title', 'Forgot Password')
 
 @section('content')
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-        <h2 class="text-3xl font-semibold text-center text-gray-800 mb-6">Forgot Password</h2>
-        <p class="text-sm text-gray-600 text-center mb-6">
-            Enter your email address below, and we'll send you a link to reset your password.
-        </p>
+<div class="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#102B3C] to-[#205375] px-4">
+    <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-lg overflow-hidden max-w-4xl w-full">
+        <!-- Illustration Section -->
+        <div class="flex items-center justify-center bg-blue-100 p-10 md:w-1/2 w-full">
+            <img src="{{ asset('images/forgot.svg') }}" alt="Forgot Password Illustration" class="w-[60%] md:w-[100%]">
+        </div>
 
-        <!-- Display success or error messages -->
-        @if (session('success'))
-            <div class="mb-4 text-green-600 text-sm text-center font-medium">
-                {{ session('success') }}
-            </div>
-        @elseif (session('error'))
-            <div class="mb-4 text-red-600 text-sm text-center font-medium">
-                {{ session('error') }}
-            </div>
-        @endif
+        <!-- Form Section -->
+        <div class="p-6 md:p-10 w-full md:w-1/2">
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-800 text-center mb-4 md:mb-6">Forgot Your Password?</h2>
+            <p class="text-sm md:text-base text-gray-600 text-center mb-6 md:mb-8">
+                Enter your email address below, and we'll send you a link to reset your password.
+            </p>
 
-        <!-- Display validation errors -->
-        @if ($errors->any())
-            <div class="mb-4 text-red-600 text-sm text-center font-medium">
-                @foreach ($errors->all() as $error)
-                    <p>{{ $error }}</p>
-                @endforeach
-            </div>
-        @endif
+            <!-- Display success or error messages -->
+            @if (session('success'))
+                <div class="mb-4 md:mb-6 text-green-600 text-sm font-medium">
+                    {{ session('success') }}
+                </div>
+            @elseif (session('error'))
+                <div class="mb-4 md:mb-6 text-red-600 text-sm font-medium">
+                    {{ session('error') }}
+                </div>
+            @endif
 
-        <form method="POST" action="{{ route('password.email') }}">
-            @csrf
-            <div class="mb-5">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                <input type="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Enter your email address" required>
+            <!-- Display validation errors, if any -->
+            @if ($errors->any())
+                <div class="mb-4 md:mb-6 text-red-600 text-sm font-medium">
+                    @foreach ($errors->all() as $error)
+                        <p>⚠️ {{ $error }}</p>
+                    @endforeach
+                </div>
+            @endif
+
+            <!-- Forgot Password Form -->
+            <form method="POST" action="{{ route('password.email') }}" class="space-y-4 md:space-y-6">
+                @csrf
+
+                <!-- Email Input -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                    <input type="email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-4 focus:ring-blue-400 focus:outline-none transition" placeholder="Enter your email" required>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="w-full bg-[#102B3C] text-white py-3 rounded-lg font-bold hover:bg-[#205375] transition transform hover:scale-105 shadow-md">
+                    Reset Password
+                </button>
+            </form>
+
+            <div class="mt-6 md:mt-8 text-center">
+                <a href="{{ route('login') }}" class="text-sm text-[#102B3C] hover:underline font-medium">Back to Login</a>
             </div>
-            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
-                Send Password Reset Link
-            </button>
-        </form>
-        <div class="mt-6 text-center">
-            <a href="{{ route('login') }}" class="text-sm text-blue-600 hover:underline font-medium">Back to Login</a>
         </div>
     </div>
 </div>

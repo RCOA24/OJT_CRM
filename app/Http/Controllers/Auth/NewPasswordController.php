@@ -13,6 +13,9 @@ class NewPasswordController extends Controller
 {
     /**
      * Display the password reset view.
+     *
+     * @param string $token Base64-encoded token containing the email
+     * @return View The reset password view
      */
     public function create(string $token): View
     {
@@ -35,17 +38,20 @@ class NewPasswordController extends Controller
     /**
      * Handle an incoming new password request.
      *
+     * @param Request $request The HTTP request containing the reset password data
+     * @return RedirectResponse Redirects to the login page or back with errors
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
+        // Validate the incoming request data
         $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8', 'confirmed'],
         ]);
 
         try {
-            // Prepare the payload to match ResetPasswordDto schema
+            // Prepare the payload to match the API's expected schema
             $payload = [
                 'email' => $request->email,
                 'newPassword' => $request->password,
@@ -73,11 +79,15 @@ class NewPasswordController extends Controller
 
             // Handle the API response
             if ($resetResponse->successful()) {
+                // Log success and redirect to the login page
                 Log::info('Password reset confirmed by API', [
                     'email' => $request->email,
                 ]);
-                return redirect()->route('login')->with('status', 'Your password has been reset successfully.');
+
+                // Redirect with a flash message
+                return redirect()->route('login')->with('success', 'Your password has been reset successfully.');
             } else {
+                // Log the error and return with validation errors
                 $errorMessage = $resetResponse->json()['message'] ?? 'An error occurred while resetting your password.';
                 Log::error('Reset Password Failed', [
                     'status' => $resetResponse->status(),
