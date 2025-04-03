@@ -33,7 +33,7 @@
             <h1 class="text-2xl font-bold">Welcome back, Mervin!</h1>
             <p class="text-sm">Here's a quick overview of your sales performance and activities.</p>
         </div>
-        <h1 class="text-lg font-bold text-gray-800 mb-2">Hey Mervin - here's what's happening with your sales report.</h1>
+        <h1 class="text-lg font-bold text-gray-800 mb-2 p-2">Hey Mervin - here's what's happening with your sales report.</h1>
         
         <!-- Statistics cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">

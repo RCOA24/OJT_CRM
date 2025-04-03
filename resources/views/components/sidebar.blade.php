@@ -229,7 +229,7 @@
         <a href="{{ route('dashboard') }}" class="text-lg font-semibold block">Dashboard</a>
         <a href="{{ route('clients.list') }}" class="text-lg font-semibold block">Clients</a>
         <a href="{{ route('users') }}" class="text-lg font-semibold block">Users</a>
-        <a href="{{ route('settings') }}" class="text-lg font-semibold block">Settings</a>
+        <a href="{{ route('settings') }}" class="text-lg font-semibold block">Task</a>
         <a href="#" class="text-lg font-semibold block">Notifications</a>
 
         <!-- Log-out Form (Same Function as Button) -->

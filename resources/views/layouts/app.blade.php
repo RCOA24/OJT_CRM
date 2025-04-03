@@ -143,7 +143,7 @@
     
     
     <!-- Main Content -->
-    <main class="w-full h-full max-w-[calc(100vw-2rem)] max-h-[calc(100vh-1rem)] overflow-auto">
+    <main class="w-full h-full max-w-[calc(100vw)] max-h-[calc(100vh-1rem)] overflow-auto">
         @yield('content')
     </main>
 
