@@ -31,7 +31,7 @@
                     <button class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
                         <x-filtericon class="w-5 h-5 mr-2" /> Filters
                     </button>
-                    <button class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
+                    <button onclick="window.location.href='{{ route('clients.archive') }}'" class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
                         <x-archiveicon class="w-5 h-5 mr-2" /> Archive
                     </button>
                     <button class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
@@ -48,17 +48,17 @@
 
             <!-- Table -->
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border rounded-lg">
-                    <thead class="bg-gray-100">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <thead class="bg-[#205375] text-white">
                         <tr>
-                            <th class="px-4 py-2 text-left text-[#205375] font-medium">Full Name</th>
-                            <th class="px-4 py-2 text-left text-[#205375] font-medium">Email</th>
-                            <th class="px-4 py-2 text-left text-[#205375] font-medium">Phone Number</th>
-                            <th class="px-4 py-2 text-left text-[#205375] font-medium">Company Name</th>
-                            <th class="px-4 py-2 text-left text-[#205375] font-medium">Actions</th>
+                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Full Name</th>
+                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Email</th>
+                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Phone Number</th>
+                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Company Name</th>
+                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="client-table-body">
+                    <tbody id="client-table-body" class="divide-y divide-gray-200">
                         <!-- Dynamic rows will be appended here -->
                     </tbody>
                 </table>
@@ -102,18 +102,18 @@
 
             clients.forEach(client => {
                 const row = document.createElement('tr');
-                row.classList.add('border-t', 'hover:bg-gray-50');
+                row.classList.add('hover:bg-gray-50');
                 row.innerHTML = `
-                    <td class="px-4 py-2 flex items-center">
-                        <img src="{{ asset('images/adminprofile.svg') }}" alt="Profile" class="w-8 h-8 rounded-full mr-2">
+                    <td class="px-6 py-4 flex items-center">
+                        <img src="{{ asset('images/adminprofile.svg') }}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
                         ${client.fullName || 'N/A'}
                     </td>
-                    <td class="px-4 py-2">${client.email || 'N/A'}</td>
-                    <td class="px-4 py-2">${client.phoneNumber || 'N/A'}</td>
-                    <td class="px-4 py-2">${client.companyName || 'N/A'}</td>
-                    <td class="px-4 py-2 flex items-center space-x-2">
-                        <x-deletebin class="w-5 h-5 text-blue-600 hover:text-blue-800" />
-                        <button class="text-red-500 hover:underline">Archive</button>
+                    <td class="px-6 py-4 text-gray-600">${client.email || 'N/A'}</td>
+                    <td class="px-6 py-4 text-gray-600">${client.phoneNumber || 'N/A'}</td>
+                    <td class="px-6 py-4 text-gray-600">${client.companyName || 'N/A'}</td>
+                    <td class="px-6 py-4 flex items-center space-x-4">
+                        <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                        <button class="text-red-500 hover:underline archive-button" data-id="${client.id}">Archive</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -157,13 +157,48 @@
             if (sortType) {
                 let sortedClients = [];
                 if (sortType === 'asc' || sortType === 'desc') {
-                    const ascending = sortType === 'asc';
-                    sortedClients = await fetchClients(`${apiUrl}?ascending=${ascending}&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`);
+                    sortedClients = await fetchSortedClients(sortType === 'asc');
                 } else if (sortType === 'recent') {
                     sortedClients = await fetchClients(`${apiUrl}?ascending=false&sortByRecentlyAdded=true&pageNumber=1&pageSize=10`);
                 }
                 renderClients(sortedClients);
                 sortDropdown.classList.add('hidden');
+            }
+        });
+
+        // Function to fetch sorted clients
+        async function fetchSortedClients(ascending) {
+            return await fetchClients(`${apiUrl}?ascending=${ascending}&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`);
+        }
+
+        // Archive functionality
+        tableBody.addEventListener('click', async (event) => {
+            const button = event.target.closest('.archive-button'); // Ensure the button is targeted
+            if (button) {
+                const clientId = button.getAttribute('data-id'); // Correctly retrieve the data-id
+                if (!clientId) {
+                    alert('Client ID not found.');
+                    return;
+                }
+                try {
+                    const response = await fetch(`http://192.168.1.9:2030/api/Clients/archived-client/${clientId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Authorization': '1234',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert('Client archived successfully!');
+                        location.reload(); // Refresh the page to update the list
+                    } else {
+                        alert('Failed to archive client.');
+                    }
+                } catch (error) {
+                    console.error('Error archiving client:', error);
+                }
             }
         });
     });

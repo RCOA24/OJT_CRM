@@ -54,6 +54,8 @@ Route::post('/users/register', [AuthenticatedSessionController::class, 'register
 
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
 
+Route::get('/clients/archive', [ClientController::class, 'archive'])->name('clients.archive');
+
 Route::get('/settings', function () {
     return view('settings.index');
 })->name('settings');
