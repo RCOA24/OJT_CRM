@@ -65,8 +65,6 @@
         </tbody>
     </table>
 </div>
-
-<!-- Pagination Controls -->
 @if(isset($pagination))
     <div class="mt-4 flex justify-between items-center text-sm text-gray-600">
         <div>
@@ -74,16 +72,26 @@
             to {{ min($pagination['current_page'] * $pagination['per_page'], $pagination['total']) }} 
             of {{ $pagination['total'] }} users
         </div>
+
+        <!-- Pagination Buttons -->
         <div class="flex gap-2">
             @if($pagination['current_page'] > 1)
+                <a href="?page=1" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 shadow-md">First</a>
                 <a href="?page={{ $pagination['current_page'] - 1 }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 shadow-md">Previous</a>
             @endif
+
+            <span class="px-4 py-2 bg-[#102B3C] text-white rounded shadow-md">
+                Page {{ $pagination['current_page'] }} of {{ $pagination['last_page'] }}
+            </span>
+
             @if($pagination['current_page'] < $pagination['last_page'])
                 <a href="?page={{ $pagination['current_page'] + 1 }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 shadow-md">Next</a>
+                <a href="?page={{ $pagination['last_page'] }}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 shadow-md">Last</a>
             @endif
         </div>
     </div>
 @endif
+
 
 <!-- Edit User Modal -->
 <div id="editUserModal" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">

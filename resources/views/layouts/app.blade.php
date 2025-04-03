@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" style="margin: 0; padding: 0; overflow: hidden;">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -143,7 +143,7 @@
     
     
     <!-- Main Content -->
-    <main class="w-full h-full">
+    <main class="w-full h-full max-w-[calc(100vw-2rem)] max-h-[calc(100vh-1rem)] overflow-auto">
         @yield('content')
     </main>
 

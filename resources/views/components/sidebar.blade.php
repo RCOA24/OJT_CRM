@@ -114,17 +114,17 @@
             </span>
             </a>
 
-                
+                 <!-- To be edit -->
             <a href="{{ route('settings') }}" 
             class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
             x-bind:class="activeItem.includes('/settings') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
             @click.prevent="activeItem = '/settings'; window.location.href='{{ route('settings') }}'">
 
             <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                <x-settingsicon class="w-6 h-6" x-bind:class="activeItem.includes('/settings') ? 'text-[#ED1C24]' : 'text-white'" />
+                <x-taskicon class="w-6 h-6" x-bind:class="activeItem.includes('/settings') ? 'text-[#ED1C24]' : 'text-white'" />
             </span>
 
-            <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Settings</span>
+            <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Task</span>
 
             <span x-show="activeItem.includes('/settings')" 
                 class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ED1C24] transition-all duration-300 ease-in-out">

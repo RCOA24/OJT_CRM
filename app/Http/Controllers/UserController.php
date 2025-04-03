@@ -11,44 +11,68 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $searchQuery = $request->query('search', '');
-        $page = (int)$request->query('page', 1);
+        $page = max(1, (int)$request->query('page', 1)); // Ensure page is at least 1
         $perPage = 5;
-
+    
+        // Fetch data from API with pagination and search
         $response = Http::withHeaders([
             'Authorization' => '1234',
             'Accept' => 'application/json',
-        ])->get('http://192.168.1.9:2030/api/Users/all-users');
-
-        $users = $response->successful() ? $response->json() : [];  
-
-        // Filter users based on search query
-        if (!empty($searchQuery)) {
-            $users = array_filter($users, function ($user) use ($searchQuery) {
-                return stripos($user['userName'], $searchQuery) !== false;
-            });
-            $users = array_values($users); // Reset array keys after filtering
+        ])->get('http://192.168.1.9:2030/api/Users/all-users', [
+            'page' => $page,
+            'per_page' => $perPage,
+            'search' => $searchQuery
+        ]);
+    
+        // Ensure API response is successful and contains data
+        if ($response->successful() && isset($response['data'])) {
+            // API supports pagination
+            $users = $response['data'];
+            $totalUsers = $response['total'] ?? 0;
+            $lastPage = $response['last_page'] ?? max(1, ceil($totalUsers / $perPage));
+        } else {
+            // Fallback for API without pagination
+            $users = $response->successful() ? $response->json() : [];
+    
+            // Apply search filtering manually
+            if (!empty($searchQuery)) {
+                $users = array_filter($users, function ($user) use ($searchQuery) {
+                    return stripos($user['userName'], $searchQuery) !== false;
+                });
+                $users = array_values($users);
+            }
+    
+            // Manual pagination
+            $totalUsers = count($users);
+            $lastPage = max(1, ceil($totalUsers / $perPage));
+            $offset = ($page - 1) * $perPage;
+            $users = array_slice($users, $offset, $perPage);
         }
-
-        // Ensure strict pagination
-        $totalUsers = count($users);
-        $offset = ($page - 1) * $perPage;
-        $users = array_slice($users, $offset, $perPage, true);
-
+    
+        // Ensure requested page does not exceed last page
+        if ($page > $lastPage) {
+            return redirect()->route('users.index', ['page' => $lastPage]);
+        }
+    
+        // Pagination metadata
         $pagination = [
             'current_page' => $page,
             'per_page' => $perPage,
             'total' => $totalUsers,
-            'last_page' => ceil($totalUsers / $perPage),
+            'last_page' => $lastPage,
         ];
-
+    
+        // Handle AJAX requests
         if ($request->ajax()) {
             return response()->json([
                 'html' => view('auth.partials.users-table', compact('users', 'pagination'))->render()
             ]);
         }
-
+    
         return view('auth.users', compact('users', 'pagination'));
     }
+    
+
     public function getUser($id)
     {
         $response = Http::withHeaders([

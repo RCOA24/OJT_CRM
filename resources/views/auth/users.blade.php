@@ -11,7 +11,7 @@
 </div>
 
 <div class="container mx-auto p-4 pt-20">
-    <div class="bg-white shadow rounded-lg p-4">
+    <div class="bg-white shadow rounded-lg p-4 max-w-[calc(100vw-4rem)] max-h-[calc(100vh-6rem)] overflow-auto">
         <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
           
             <h2 class="text-lg font-semibold">Users</h2>
