@@ -61,9 +61,9 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4"> <!-- Adjusted grid for all screen sizes -->
             <div class="lg:col-span-2 bg-white rounded-lg shadow-lg p-4"> <!-- Updated padding -->
-                <div class="flex flex-col md:flex-row justify-between items-center mb-4">
-                    <h2 class="text-lg font-semibold text-gray-800">Sales Report</h2>
-                    <div class="flex space-x-2">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4"> <!-- Adjusted for responsiveness -->
+                    <h2 class="text-lg font-semibold text-gray-800 mb-2 sm:mb-0">Sales Report</h2> <!-- Added margin for smaller screens -->
+                    <div class="flex flex-wrap gap-2"> <!-- Adjusted spacing for buttons -->
                         <button class="px-3 py-1 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">12 Months</button>
                         <button class="px-3 py-1 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">6 Months</button>
                         <button class="px-3 py-1 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">30 Days</button>
@@ -74,7 +74,7 @@
                         </button>
                     </div>
                 </div>
-                <canvas id="salesChart" class="h-40"></canvas> <!-- Increased height -->
+                <canvas id="salesChart" class="h-40 w-full"></canvas> <!-- Ensured full width for responsiveness -->
             </div>
             <div class="bg-white rounded-lg shadow-lg p-4"> <!-- Added shadow-lg -->
                 <h2 class="text-xs font-semibold text-gray-700 mb-1">Sales</h2>
