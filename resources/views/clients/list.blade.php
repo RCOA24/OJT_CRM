@@ -155,7 +155,7 @@
 
         // Handle sorting
         sortDropdown.addEventListener('click', async (event) => {
-            const sortType = event.target.getAttribute('data-sort');
+            const sortType = event.target.closest('button')?.getAttribute('data-sort'); // Ensure button is targeted
             if (sortType) {
                 let sortedClients = [];
                 if (sortType === 'asc' || sortType === 'desc') {
@@ -164,7 +164,9 @@
                     sortedClients = await fetchClients(`${apiUrl}?ascending=false&sortByRecentlyAdded=true&pageNumber=1&pageSize=10`);
                 }
                 renderClients(sortedClients);
-                sortDropdown.classList.add('hidden');
+
+                // Keep the dropdown open for better UX
+                sortDropdown.classList.remove('hidden');
             }
         });
 
