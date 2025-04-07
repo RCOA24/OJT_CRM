@@ -8,6 +8,8 @@
     <!-- Main Content -->
     <div class="flex-1 p-6 bg-gray-100 pt-20">
         <div class="container mx-auto bg-white shadow rounded-lg p-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] overflow-auto">
+            <!-- Flash Message -->
+            <div id="flash-message" class="hidden mb-4 p-4 rounded-lg text-white transition-all duration-500 transform opacity-0 scale-95"></div>
             <!-- Header -->
             <div class="flex flex-col md:flex-row justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold text-gray-800">Client Lists <span id="client-count" class="text-sm text-gray-500">(0 client lists)</span></h1>
@@ -113,7 +115,7 @@
                     <td class="px-6 py-4 text-gray-600">${client.companyName || 'N/A'}</td>
                     <td class="px-6 py-4 flex items-center space-x-4">
                         <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
-                        <button class="text-red-500 hover:underline archive-button" data-id="${client.id}">Archive</button>
+                        <button class="text-red-500 hover:underline archive-button" data-id="${client.clientId}">Archive</button> <!-- Fixed data-id -->
                     </td>
                 `;
                 tableBody.appendChild(row);
@@ -171,36 +173,85 @@
             return await fetchClients(`${apiUrl}?ascending=${ascending}&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`);
         }
 
+        function showFlashMessage(message, type) {
+            const flashMessage = document.getElementById('flash-message');
+            flashMessage.textContent = message;
+            flashMessage.className = `mb-4 p-4 rounded-lg text-white transition-all duration-500 transform ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } opacity-0 scale-95`; // Reset animation state
+            flashMessage.classList.remove('hidden');
+            setTimeout(() => {
+                flashMessage.classList.add('opacity-100', 'scale-100'); // Fade in and scale up
+            }, 10); // Slight delay for animation to apply
+
+            setTimeout(() => {
+                flashMessage.classList.remove('opacity-100', 'scale-100'); // Fade out and scale down
+                flashMessage.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    flashMessage.classList.add('hidden'); // Hide after animation
+                }, 500); // Match the duration of the fade-out animation
+            }, 3000); // Display for 3 seconds
+        }
+
         // Archive functionality
         tableBody.addEventListener('click', async (event) => {
             const button = event.target.closest('.archive-button'); // Ensure the button is targeted
             if (button) {
-                const clientId = button.getAttribute('data-id'); // Correctly retrieve the data-id
+                const clientId = button.getAttribute('data-id'); // Retrieve the client ID
                 if (!clientId) {
-                    alert('Client ID not found.');
+                    showFlashMessage('Client ID not found.', 'error');
+                    console.error('Archive button clicked, but client ID is missing.');
                     return;
                 }
                 try {
+                    console.log(`Attempting to archive client with ID: ${clientId}`);
                     const response = await fetch(`http://192.168.1.9:2030/api/Clients/archived-client/${clientId}`, {
                         method: 'PUT',
                         headers: {
                             'Accept': 'application/json',
-                            'Authorization': '1234',
+                            'Authorization': '1234', // Ensure this token is valid
                             'Content-Type': 'application/json'
                         }
                     });
 
                     if (response.ok) {
-                        alert('Client archived successfully!');
-                        location.reload(); // Refresh the page to update the list
+                        showFlashMessage('Client archived successfully!', 'success');
+                        console.log(`Client with ID ${clientId} archived successfully.`);
+                        // Remove the archived client from the table
+                        allClients = allClients.filter(client => client.clientId !== parseInt(clientId));
+                        renderClients(allClients);
                     } else {
-                        alert('Failed to archive client.');
+                        const errorData = await response.json(); // Parse error response
+                        console.error('Error response from server:', errorData);
+                        showFlashMessage(`Failed to archive client: ${errorData.message || 'Unknown error'}`, 'error');
                     }
                 } catch (error) {
-                    console.error('Error archiving client:', error);
+                    console.error('Error occurred while archiving client:', error);
+                    showFlashMessage('An error occurred while archiving the client. Please try again.', 'error');
                 }
             }
         });
+
+        async function fetchClientsRealTime() {
+            try {
+                const response = await fetch(`${apiUrl}?ascending=true&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': '1234'
+                    }
+                });
+                const data = await response.json();
+                renderClients(data.items || []);
+            } catch (error) {
+                console.error('Error fetching clients:', error);
+            }
+        }
+
+        // Polling every 10 seconds
+        setInterval(fetchClientsRealTime, 10000);
+
+        // Initial fetch
+        fetchClientsRealTime();
     });
 </script>
 @endsection

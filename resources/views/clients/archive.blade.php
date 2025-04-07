@@ -5,6 +5,8 @@
 
 <div class="flex-1 p-6 bg-gray-100 pt-20">
     <div class="container mx-auto bg-white shadow rounded-lg p-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] overflow-auto">
+        <!-- Flash Message -->
+        <div id="flash-message" class="hidden mb-4 p-4 rounded-lg text-white transition-all duration-500 transform opacity-0 scale-95"></div>
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-6">
             <div class="flex items-center space-x-4">
@@ -51,9 +53,29 @@
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
         const apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archieve-clients';
-        const unarchiveUrl = '/api/clients/archived-client/';
+        const unarchiveUrl = 'http://192.168.1.9:2030/api/Clients/unarchive-client/';
         const tableBody = document.getElementById('archive-table-body');
         const archiveCount = document.getElementById('archive-count');
+
+        function showFlashMessage(message, type) {
+            const flashMessage = document.getElementById('flash-message');
+            flashMessage.textContent = message;
+            flashMessage.className = `mb-4 p-4 rounded-lg text-white transition-all duration-500 transform ${
+                type === 'success' ? 'bg-green-500' : 'bg-red-500'
+            } opacity-0 scale-95`; // Reset animation state
+            flashMessage.classList.remove('hidden');
+            setTimeout(() => {
+                flashMessage.classList.add('opacity-100', 'scale-100'); // Fade in and scale up
+            }, 10); // Slight delay for animation to apply
+
+            setTimeout(() => {
+                flashMessage.classList.remove('opacity-100', 'scale-100'); // Fade out and scale down
+                flashMessage.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => {
+                    flashMessage.classList.add('hidden'); // Hide after animation
+                }, 500); // Match the duration of the fade-out animation
+            }, 3000); // Display for 3 seconds
+        }
 
         async function fetchArchivedClients() {
             try {
@@ -73,6 +95,7 @@
 
         async function unarchiveClient(clientId) {
             try {
+                console.log(`Attempting to unarchive client with ID: ${clientId}`);
                 const response = await fetch(`${unarchiveUrl}${clientId}`, {
                     method: 'PUT',
                     headers: {
@@ -81,13 +104,17 @@
                     }
                 });
                 if (response.ok) {
-                    alert('Client unarchived successfully');
+                    showFlashMessage('Client unarchived successfully!', 'success');
+                    console.log(`Client with ID ${clientId} unarchived successfully.`);
                     loadArchivedClients(); // Refresh the list
                 } else {
-                    console.error('Failed to unarchive client');
+                    const errorData = await response.json();
+                    console.error('Error response from server:', errorData);
+                    showFlashMessage(`Failed to unarchive client: ${errorData.message || 'Unknown error'}`, 'error');
                 }
             } catch (error) {
                 console.error('Error unarchiving client:', error);
+                showFlashMessage('An error occurred while unarchiving the client. Please try again.', 'error');
             }
         }
 
@@ -117,7 +144,7 @@
             // Attach event listeners to unarchive buttons
             document.querySelectorAll('.unarchive-button').forEach(button => {
                 button.addEventListener('click', (e) => {
-                    const clientId = e.target.getAttribute('client.clientId');
+                    const clientId = e.target.getAttribute('data-id');
                     unarchiveClient(clientId);
                 });
             });
@@ -129,6 +156,33 @@
         }
 
         loadArchivedClients();
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archieve-clients';
+
+        async function fetchArchivedClientsRealTime() {
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': '1234'
+                    }
+                });
+                const data = await response.json();
+                renderArchivedClients(data || []);
+            } catch (error) {
+                console.error('Error fetching archived clients:', error);
+            }
+        }
+
+        // Polling every 10 seconds
+        setInterval(fetchArchivedClientsRealTime, 10000);
+
+        // Initial fetch
+        fetchArchivedClientsRealTime();
     });
 </script>
 @endsection
