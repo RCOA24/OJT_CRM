@@ -5,88 +5,118 @@
 @include('components.sidebar')
 
 @section('content')
-<div class="flex-1 p-2 bg-gray-100 pt-20">
+<div class="flex-1 p-4 bg-gradient-to-br from-[#F9FAFB] to-[#E8EBF0] pt-20">
     <div class="container mx-auto">
         <!-- Search bar and greeting -->
-        <div class="flex flex-col md:flex-row justify-between items-center mb-4">
-            <div class="relative w-full md:w-full pr-4  ">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+            <div class="relative w-full md:w-full pr-4">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
-                    <x-searchicon class="w-6 h-6 text-blue-600" /> <!-- Font Awesome search icon -->
+                    <x-searchicon class="w-6 h-6 text-blue-600" />
                 </span>
-                <input type="text" placeholder="Type to search" 
-                       class="border rounded-lg pl-10 pr-4 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="global-search-input" type="text" placeholder="Search for anything..." 
+                       class="border rounded-lg pl-10 pr-4 py-2 w-full text-sm focus:outline-none focus:ring-4 focus:ring-blue-400 shadow-md">
+                <div id="search-results-dropdown" class="absolute z-10 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 w-full hidden max-h-60 overflow-y-auto">
+                    <!-- Search results will be dynamically added here -->
+                </div>
             </div>
-            <div class="flex items-center space-x-4 mt-4 md:mt-0">
+            <div class="flex items-center space-x-6 mt-4 md:mt-0">
                 <div class="relative">
-                    <span class="absolute bottom-4 right-0 bg-red-500 text-white text-xs rounded-full px-1">2</span>
+                    <span class="absolute bottom-4 right-0 bg-red-500 text-white text-xs rounded-full px-1 shadow-md">2</span>
                     <x-mailicon class="w-6 h-6 text-blue-600" />
                 </div>
                 <div class="relative">
-                    <span class="absolute bottom-5 right-0 bg-red-500 text-white text-xs rounded-full px-1">5</span>
+                    <span class="absolute bottom-5 right-0 bg-red-500 text-white text-xs rounded-full px-1 shadow-md">5</span>
                     <x-bellicon class="w-6 h-6 text-blue-600" />
                 </div>
                 <x-gearicon class="w-6 h-6 text-blue-600" />
-                
             </div>
         </div>
-        <div class="bg-gradient-to-r from-[#102B3C] to-[#205375] text-white rounded-lg shadow-lg p-6 mb-4">
-            <h1 class="text-2xl font-bold">Welcome back, Mervin!</h1>
-            <p class="text-sm">Here's a quick overview of your sales performance and activities.</p>
+
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-r from-[#102B3C] to-[#205375] text-white rounded-xl shadow-xl p-6 mb-6 backdrop-blur-md">
+            <h1 class="text-3xl font-extrabold">Welcome back, Mervin!</h1>
+            <p class="text-sm opacity-90">Here's a quick overview of your sales performance and activities.</p>
         </div>
-        <h1 class="text-lg font-bold text-gray-800 mb-2 p-2">Hey Mervin - here's what's happening with your sales report.</h1>
-        
-        <!-- Statistics cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-            <div class="bg-white rounded-lg shadow-lg p-4">
-                <h2 class="text-xs font-semibold text-gray-600">TOTAL CLIENTS</h2>
-                <p class="text-2xl font-bold text-gray-800">490</p>
-                <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg p-4">
-                <h2 class="text-xs font-semibold text-gray-600">TOTAL USERS</h2>
-                <p class="text-2xl font-bold text-gray-800">20</p>
-                <p class="text-sm text-red-500 font-semibold">-14% ↓</p>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg p-4">
-                <h2 class="text-xs font-semibold text-gray-600">TOTAL LEADS</h2>
-                <p class="text-2xl font-bold text-gray-800">456</p>
-                <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
-            </div>
-            <div class="bg-white rounded-lg shadow-lg p-4">
-                <h2 class="text-xs font-semibold text-gray-600">PENDING TASK</h2>
-                <p class="text-2xl font-bold text-gray-800">459</p>
-                <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
-            </div>
+
+        <!-- Statistics Cards -->
+        <h1 class="text-lg font-bold text-gray-800 mb-4">Your Sales Overview</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+            <!-- Total Clients -->
+            <a href="{{ route('clients.list') }}" 
+               class="block transform transition-transform duration-300 hover:scale-105"
+               @click.prevent="activeItem = '/clients'; window.location.href='{{ route('clients.list') }}'">
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-2xl transition-shadow">
+                    <h2 class="text-xs font-semibold text-gray-600">TOTAL CLIENTS</h2>
+                    <p id="total-clients-count" class="text-3xl font-extrabold text-gray-800">(0)</p>
+                    <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
+                </div>
+            </a>
+
+            <!-- Total Users -->
+            <a href="{{ route('users') }}" 
+               class="block transform transition-transform duration-300 hover:scale-105"
+               @click.prevent="activeItem = '/users'; window.location.href='{{ route('users') }}'">
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-2xl transition-shadow">
+                    <h2 class="text-xs font-semibold text-gray-600">TOTAL USERS</h2>
+                    <p id="total-users-count" class="text-3xl font-extrabold text-gray-800">(0)</p>
+                    <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
+                </div>
+            </a>
+
+            <!-- Total Leads -->
+            <a href="#" 
+               class="block transform transition-transform duration-300 hover:scale-105"
+               @click.prevent="activeItem = '/leads'; window.location.href='#'">
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-2xl transition-shadow">
+                    <h2 class="text-xs font-semibold text-gray-600">TOTAL LEADS</h2>
+                    <p class="text-3xl font-extrabold text-gray-800">456</p>
+                    <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
+                </div>
+            </a>
+
+            <!-- Pending Tasks -->
+            <a href="{{ route('task') }}" 
+               class="block transform transition-transform duration-300 hover:scale-105"
+               @click.prevent="activeItem = '/task'; window.location.href='{{ route('task') }}'">
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-2xl transition-shadow">
+                    <h2 class="text-xs font-semibold text-gray-600">PENDING TASK</h2>
+                    <p class="text-3xl font-extrabold text-gray-800">459</p>
+                    <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
+                </div>
+            </a>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4"> <!-- Adjusted grid for all screen sizes -->
-            <div class="lg:col-span-2 bg-white rounded-lg shadow-lg p-4"> <!-- Updated padding -->
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4"> <!-- Adjusted for responsiveness -->
-                    <h2 class="text-lg font-semibold text-gray-800 mb-2 sm:mb-0">Sales Report</h2> <!-- Added margin for smaller screens -->
-                    <div class="flex flex-wrap gap-2"> <!-- Adjusted spacing for buttons -->
-                        <button class="px-3 py-1 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">12 Months</button>
-                        <button class="px-3 py-1 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">6 Months</button>
-                        <button class="px-3 py-1 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">30 Days</button>
-                        <button class="px-3 py-1 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">7 Days</button>
-                        <button class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-2">
-                            <x-pdficon class="w-5 h-5 text-white" /> <!-- Adjusted icon size and color -->
+
+        <!-- Sales Report and Breakdown -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800">Sales Report</h2>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="px-4 py-2 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-blue-400">12 Months</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-blue-400">6 Months</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-blue-400">30 Days</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-600 border rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-blue-400">7 Days</button>
+                        <button class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-400 flex items-center space-x-2">
+                            <x-pdficon class="w-5 h-5 text-white" />
                             <span>Export PDF</span>
                         </button>
                     </div>
                 </div>
-                <canvas id="salesChart" class="h-40 w-full"></canvas> <!-- Ensured full width for responsiveness -->
+                <canvas id="salesChart" class="h-48 w-full"></canvas>
             </div>
-            <div class="bg-white rounded-lg shadow-lg p-4"> <!-- Added shadow-lg -->
-                <h2 class="text-xs font-semibold text-gray-700 mb-1">Sales</h2>
-                <canvas id="salesBreakdownChart" class="h-40"></canvas> <!-- Reduced height -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-sm font-semibold text-gray-700 mb-2">Sales Breakdown</h2>
+                <canvas id="salesBreakdownChart" class="h-48"></canvas>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> <!-- Adjusted grid for all screen sizes -->
-            <div class="bg-white rounded-lg shadow-lg p-4"> <!-- Added shadow-lg -->
-                <h2 class="text-xs font-semibold text-gray-700 mb-1">Sales Pipeline</h2>
-                <canvas id="salesPipelineChart" class="h-40"></canvas> <!-- Added canvas for sales pipeline chart -->
+
+        <!-- Sales Pipeline and Notifications -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <h2 class="text-sm font-semibold text-gray-700 mb-2">Sales Pipeline</h2>
+                <canvas id="salesPipelineChart" class="h-48"></canvas>
             </div>
-            <div class="bg-white rounded-lg shadow-lg p-4"> <!-- Updated Recent Notifications -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
                 <h2 class="text-sm font-semibold text-gray-700 mb-4">Recent Notifications</h2>
                 <ul class="divide-y divide-gray-200">
                     <li class="flex items-center py-3">
@@ -119,7 +149,9 @@
                 </ul>
             </div>
         </div>
-        <div class="bg-white rounded-lg shadow-lg p-4 mt-4"> <!-- Updated Recent Activities -->
+
+        <!-- Recent Activities -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
             <h2 class="text-sm font-semibold text-gray-700 mb-4">Recent Activities</h2>
             <ul class="divide-y divide-gray-200">
                 <li class="flex items-center py-3">
@@ -236,6 +268,112 @@
                         beginAtZero: true
                     }
                 }
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const totalClientsCount = document.getElementById('total-clients-count');
+        const totalUsersCount = document.getElementById('total-users-count');
+        const countsApiUrl = '/dashboard/get-counts'; // New endpoint
+
+        async function fetchCounts() {
+            try {
+                const response = await fetch(countsApiUrl, {
+                    headers: {
+                        'Cache-Control': 'no-cache', // Ensure fresh data
+                        'Pragma': 'no-cache',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Debugging: Log the fetched data
+                console.log('Fetched Counts:', data);
+
+                // Update the counts without parentheses
+                totalClientsCount.textContent = data.totalClients;
+                totalUsersCount.textContent = data.totalUsers;
+            } catch (error) {
+                console.error('Error fetching counts:', error);
+                totalClientsCount.textContent = 'Error';
+                totalUsersCount.textContent = 'Error';
+            }
+        }
+
+        // Fetch counts initially and then every 10 seconds
+        fetchCounts();
+        setInterval(fetchCounts, 10000);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('global-search-input');
+        const searchResultsDropdown = document.getElementById('search-results-dropdown');
+        const searchApiUrl = 'http://192.168.1.9:2030/api/GlobalSearch/search';
+
+        // Function to fetch search results
+        async function fetchSearchResults(query) {
+            try {
+                const response = await fetch(`${searchApiUrl}?search=${query}`, {
+                    headers: {
+                        'Authorization': '1234',
+                        'Accept': 'application/json'
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+                return [];
+            }
+        }
+
+        // Function to render search results
+        function renderSearchResults(results) {
+            searchResultsDropdown.innerHTML = ''; // Clear previous results
+            if (results.length === 0) {
+                searchResultsDropdown.classList.add('hidden');
+                return;
+            }
+
+            results.forEach(result => {
+                const item = document.createElement('div');
+                item.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer';
+                item.textContent = `${result.fullName} (${result.type})`;
+                item.addEventListener('click', () => {
+                    if (result.type === 'client') {
+                        window.location.href = `/clients?search=${encodeURIComponent(result.fullName)}`;
+                    } else if (result.type === 'user') {
+                        window.location.href = `/users?search=${encodeURIComponent(result.fullName)}`;
+                    }
+                });
+                searchResultsDropdown.appendChild(item);
+            });
+
+            searchResultsDropdown.classList.remove('hidden');
+        }
+
+        // Event listener for search input
+        searchInput.addEventListener('input', async () => {
+            const query = searchInput.value.trim();
+            if (query.length > 0) {
+                const results = await fetchSearchResults(query);
+                renderSearchResults(results);
+            } else {
+                searchResultsDropdown.classList.add('hidden');
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!searchInput.contains(event.target) && !searchResultsDropdown.contains(event.target)) {
+                searchResultsDropdown.classList.add('hidden');
             }
         });
     });

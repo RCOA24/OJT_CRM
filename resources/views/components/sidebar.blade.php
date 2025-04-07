@@ -1,35 +1,40 @@
-<div x-data="{ open: true, mobileOpen: false, activeItem: 'dashboard', menuOpen: null }" class="flex min-h-screen font-montserrat">
-
-
+<div x-data="{ 
+        open: true, 
+        mobileOpen: false, 
+        activeItem: window.location.pathname 
+    }" 
+    x-init="$watch('activeItem', val => {
+        try { localStorage.setItem('activeItem', val); }
+        catch (e) { /* Handle localStorage unavailability silently */ }
+    })" 
+    class="flex min-h-screen font-montserrat"
+>
     <!-- Sidebar / Mobile Navigation -->
     <div 
         :class="open ? 'w-64' : 'w-16'"
         class="hidden md:flex h-screen bg-[#102B3C] shadow-lg transition-all duration-300 flex-col"
     >
-
-       <!-- Sidebar Content -->
-<div class="flex items-center justify-between p-4 border-b space-x-2">
-    <span :class="open ? 'block' : 'hidden'" class="transition-all">
-        <img src="{{ asset('images/logo.svg') }}" alt="Odecci Logo" class="h-auto">
-    </span>
-    
-    <button @click="open = !open" class="p-2 rounded-md focus:outline-none">
-        <svg 
-            class="w-6 h-6 transition-transform transform text-white" 
-            :class="open ? 'rotate-180' : 'rotate-0'" 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 20 20" 
-            fill="currentColor"
-        >
-            <path fill-rule="evenodd" 
-                d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
-                clip-rule="evenodd"
-            />
-        </svg>
-    </button>
-    
-</div>
-
+        <!-- Sidebar Content -->
+        <div class="flex items-center justify-between p-4 border-b space-x-2">
+            <span :class="open ? 'block' : 'hidden'" class="transition-all">
+                <img src="{{ asset('images/logo.svg') }}" alt="Odecci Logo" class="h-auto">
+            </span>
+            
+            <button @click="open = !open" class="p-2 rounded-md focus:outline-none">
+                <svg 
+                    class="w-6 h-6 transition-transform transform text-white" 
+                    :class="open ? 'rotate-180' : 'rotate-0'" 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                >
+                    <path fill-rule="evenodd" 
+                        d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
+                        clip-rule="evenodd"
+                    />
+                </svg>
+            </button>
+        </div>
 
         <style>
             /* Fade-in animation for the entire page */
@@ -51,107 +56,62 @@
             }
         </style>
         
-        <nav x-data="{ 
-            activeItem: (() => {
-                try { return localStorage.getItem('activeItem') || window.location.pathname }
-                catch (e) { return window.location.pathname }
-            })()
-        }" 
-        x-init="$watch('activeItem', val => {
-            try { localStorage.setItem('activeItem', val); }
-            catch (e) { /* Handle localStorage unavailability silently */ }
-        })" 
-        class="flex-1 px-2 py-4 space-y-2">
-        
-                    <a href="{{ route('dashboard') }}" 
+        <nav class="flex-1 px-2 py-4 space-y-2">
+            <!-- Dashboard -->
+            <a href="{{ route('dashboard') }}" 
                 class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
                 x-bind:class="activeItem.includes('/dashboard') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-                @click.prevent="activeItem = '/dashboard'; window.location.href='{{ route('dashboard') }}'">
-
+            >
                 <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
                     <x-dashboardicon class="w-6 h-6" x-bind:class="activeItem.includes('/dashboard') ? 'text-[#ED1C24]' : 'text-white'" />
                 </span>
-                
                 <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Dashboard</span>
-                
-                <span x-show="activeItem.includes('/dashboard')" 
-                    class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ED1C24] transition-all duration-300 ease-in-out">
+            </a>
+
+            <!-- Clients -->
+            <a href="{{ route('clients.list') }}" 
+                class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
+                x-bind:class="activeItem.includes('/clients') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
+            >
+                <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                    <x-clientsicon class="w-6 h-6" x-bind:class="activeItem.includes('/clients') ? 'text-[#ED1C24]' : 'text-white'" />
                 </span>
+                <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Clients</span>
             </a>
 
-                
-            
-<!-- Clients Menu Item -->
-<a href="{{ route('clients.list') }}" 
-   class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
-   x-bind:class="activeItem.includes('/clients') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-   @click.prevent="activeItem = '/clients'; window.location.href='{{ route('clients.list') }}'">
-
-    <!-- Icon -->
-    <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-        <x-clientsicon class="w-6 h-6" x-bind:class="activeItem.includes('/clients') ? 'text-[#ED1C24]' : 'text-white'" />
-    </span>
-
-    <!-- Text (Hidden when Sidebar is Collapsed) -->
-    <span class="ml-2 transition-all duration-300" x-bind:class="open ? 'block' : 'hidden'">Clients</span>
-</a>
-
-
-                
+            <!-- Users -->
             <a href="{{ route('users') }}" 
-            class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
-            x-bind:class="activeItem.includes('/users') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-            @click.prevent="activeItem = '/users'; window.location.href='{{ route('users') }}'">
-
-            <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                <x-usersicon class="w-6 h-6" x-bind:class="activeItem.includes('/users') ? 'text-[#ED1C24]' : 'text-white'" />
-            </span>
-
-            <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Users</span>
-
-            <span x-show="activeItem.includes('/users')" 
-                class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ED1C24] transition-all duration-300 ease-in-out">
-            </span>
+                class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
+                x-bind:class="activeItem.includes('/users') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
+            >
+                <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                    <x-usersicon class="w-6 h-6" x-bind:class="activeItem.includes('/users') ? 'text-[#ED1C24]' : 'text-white'" />
+                </span>
+                <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Users</span>
             </a>
 
-                 <!-- To be edit -->
-            <a href="{{ route('settings') }}" 
-            class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
-            x-bind:class="activeItem.includes('/settings') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-            @click.prevent="activeItem = '/settings'; window.location.href='{{ route('settings') }}'">
-
-            <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                <x-taskicon class="w-6 h-6" x-bind:class="activeItem.includes('/settings') ? 'text-[#ED1C24]' : 'text-white'" />
-            </span>
-
-            <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Task</span>
-
-            <span x-show="activeItem.includes('/settings')" 
-                class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ED1C24] transition-all duration-300 ease-in-out">
-            </span>
+            <!-- Task -->
+            <a href="{{ route('task') }}" 
+                class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
+                x-bind:class="activeItem.includes('/task') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
+            >
+                <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                    <x-taskicon class="w-6 h-6" x-bind:class="activeItem.includes('/task') ? 'text-[#ED1C24]' : 'text-white'" />
+                </span>
+                <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Task</span>
             </a>
 
-                
+            <!-- Notifications -->
             <a href="#" 
-            class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
-            x-bind:class="activeItem.includes('/notifications') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-            @click.prevent="activeItem = '/notifications'; window.location.href='#'">
-
-            <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                <x-notificationsicon class="w-6 h-6" x-bind:class="activeItem.includes('/notifications') ? 'text-[#ED1C24]' : 'text-white'" />
-            </span>
-
-            <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Notifications</span>
-
-            <span x-show="activeItem.includes('/notifications')" 
-                class="absolute bottom-0 left-0 w-full h-0.5 bg-[#ED1C24] transition-all duration-300 ease-in-out">
-            </span>
+                class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
+                x-bind:class="activeItem.includes('/notifications') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
+            >
+                <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                    <x-notificationsicon class="w-6 h-6" x-bind:class="activeItem.includes('/notifications') ? 'text-[#ED1C24]' : 'text-white'" />
+                </span>
+                <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Notifications</span>
             </a>
-
-    
-    </nav>
-    
-        
+        </nav>
 
         <!-- Profile & Logout -->
         <div class="p-4 mt-auto border-t">
@@ -183,9 +143,6 @@
                     </button>
                 </form>
             </div>
-            
-            
-            
         </div>
     </div> 
 
@@ -209,7 +166,6 @@
             />
                 </svg>
             </button>
-            
         </div>
     </div>
 
@@ -220,7 +176,6 @@
     @click="mobileOpen = false">
 </div>
 
-
 <!-- Mobile Sidebar (Overlapping Content but Below Navbar) -->  
 <div x-show="mobileOpen" 
     class="fixed top-16 left-0 w-full bg-white shadow-lg z-50 transition-transform transform">
@@ -229,7 +184,7 @@
         <a href="{{ route('dashboard') }}" class="text-lg font-semibold block">Dashboard</a>
         <a href="{{ route('clients.list') }}" class="text-lg font-semibold block">Clients</a>
         <a href="{{ route('users') }}" class="text-lg font-semibold block">Users</a>
-        <a href="{{ route('settings') }}" class="text-lg font-semibold block">Task</a>
+        <a href="{{ route('task') }}" class="text-lg font-semibold block">Task</a> <!-- Updated -->
         <a href="#" class="text-lg font-semibold block">Notifications</a>
 
         <!-- Log-out Form (Same Function as Button) -->
@@ -241,7 +196,4 @@
         </form>
     </nav>
 </div>
-
-
-
 </div>

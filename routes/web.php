@@ -1,18 +1,12 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\Auth\PasswordResetLinkController;
-use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
-
-Route::get('/users', function () {
-    return view('auth.users'); // Ensure this matches the correct path
-})->name('users.view');
-
-Route::get('/users', [UserController::class, 'index'])->name('users');
+use Illuminate\Support\Facades\Route;
 
 // Redirect Home Page to Login
 Route::get('/', function () {
@@ -30,35 +24,30 @@ Route::middleware('guest')->group(function () {
 
     // Reset Password Routes
     Route::get('/reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset.form');
-
-    Route::put('/reset-password', [NewPasswordController::class, 'store'])->name('password.update'); // Change to PUT
+    Route::put('/reset-password', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
 // Logout Route
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-// Dashboard Route (Check if session token exists)
-Route::get('/dashboard', function () {
-    if (!session()->has('api_token')) {
-        return redirect()->route('login')->withErrors(['error' => 'Please log in first']);
-    }
-    return view('auth.dashboard'); // Make sure you have auth.dashboard.blade.php
-})->name('dashboard');
+// Dashboard Route
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/get-counts', [DashboardController::class, 'getCounts']);
 
-// Update user
+// Users Routes
+Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::get('/users/{id}', [UserController::class, 'getUser']);
-
 Route::put('/users/update/{id}', [UserController::class, 'updateUser'])->name('user.update');
-
 Route::post('/users/register', [AuthenticatedSessionController::class, 'register']);
 
+// Clients Routes
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
-
 Route::get('/clients/archive', [ClientController::class, 'archive'])->name('clients.archive');
 
-Route::get('/settings', function () {
-    return view('settings.index');
-})->name('settings');
+// Task Route
+Route::get('/task', function () {
+    return view('task.index'); // Ensure this view exists
+})->name('task');
 
 // Include authentication-related routes (registration, password reset, etc.)
 require __DIR__.'/auth.php';

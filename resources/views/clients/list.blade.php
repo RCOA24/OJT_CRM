@@ -3,99 +3,97 @@
 @include('components.sidebar')
 @section('content')
 
-    <!-- Sidebar -->
-
-    <!-- Main Content -->
-    <div class="flex-1 p-6 bg-gray-100 pt-20">
-        <div class="container mx-auto bg-white shadow rounded-lg p-6 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] overflow-auto">
-            <!-- Flash Message -->
-            <div id="flash-message" class="hidden mb-4 p-4 rounded-lg text-white transition-all duration-500 transform opacity-0 scale-95"></div>
-            <!-- Header -->
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-800">Client Lists <span id="client-count" class="text-sm text-gray-500">(0 client lists)</span></h1>
-                <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mt-4 md:mt-0">
-                    <div class="relative">
-                        <button id="sort-button" class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
-                            <x-sorticon class="w-5 h-5 mr-2" /> Sort
+<div class="flex-1 p-6 bg-[#FAFBFB] pt-20">
+    <div class="container mx-auto bg-white shadow-lg rounded-xl p-8 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] overflow-auto">
+        <!-- Flash Message -->
+        <div id="flash-message" class="hidden mb-4 p-4 rounded-lg text-white transition-all duration-500 transform opacity-0 scale-95 "></div>
+        
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+            <h1 class="text-3xl font-extrabold text-gray-800">Client Lists 
+                <span id="client-count" class="text-lg text-gray-500">(0 client lists)</span>
+            </h1>
+            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-4 md:mt-0">
+                <div class="relative">
+                    <button id="sort-button" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
+                        <x-sorticon class="w-5 h-5 mr-2" /> Sort
+                    </button>
+                    <div id="sort-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                        <button data-sort="asc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
+                            <x-ascending class="w-5 h-5 hover:text-white" /> <span>Ascending</span>
                         </button>
-                        <div id="sort-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-[#FAFBFB] border rounded shadow-lg">
-                            <button data-sort="asc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
-                                <x-ascending class="w-5 h-5 hover:text-white" /> <span>Ascending</span>
-                            </button>
-                            <button data-sort="desc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
-                                <x-descending class="w-5 h-5 hover:text-white" /> <span>Descending</span>
-                            </button>
-                            <button data-sort="recent" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
-                                <x-recenticon class="w-5 h-5 hover:text-white" /> <span>Recently Added</span>
-                            </button>
+                        <button data-sort="desc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
+                            <x-descending class="w-5 h-5 hover:text-white" /> <span>Descending</span>
+                        </button>
+                        <button data-sort="recent" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
+                            <x-recenticon class="w-5 h-5 hover:text-white" /> <span>Recently Added</span>
+                        </button>
+                    </div>
+                </div>  
+                <div class="relative">
+                    <button id="filter-button" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
+                        <x-filtericon class="w-5 h-5 mr-2" /> Filters
+                    </button>
+                    <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg p-4">
+                        <div class="mb-4">
+                            <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                Filter by Industry <x-filtericonblack class="w-4 h-4 ml-1" />
+                            </h3>
+                            <select id="industry-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                <option value="">Select Industry</option>
+                                <option value="Engineer">Engineer</option>
+                                <option value="Technology">Technology</option>
+                                <option value="IT Department">IT Department</option>
+                                <option value="Basketball">Basketball</option>
+                                <option value="Beverages">Beverages</option>
+                            </select>
                         </div>
-                    </div>  
-                    <div class="relative">
-                        <button id="filter-button" class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
-                            <x-filtericon class="w-5 h-5 mr-2" /> Filters
-                        </button>
-                        <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded shadow-lg p-4">
-                            <div class="mb-4">
-                                <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                                    Filter by Industry <x-filtericonblack class="w-4 h-4 ml-1" />
-                                </h3>
-                                <select id="industry-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#205375]">
-                                    <option value="">Select Industry</option>
-                                    <option value="Engineer">Engineer</option>
-                                    <option value="Technology">Technology</option>
-                                    <option value="IT Department">IT Department</option>
-                                    <option value="Basketball">Basketball</option>
-                                    <option value="Beverages">Beverages</option>
-                                </select>
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
-                                    Filter by Lead Source  <x-filtericonblack class="w-4 h-4 ml-1" />
-                                </h3>
-                                <select id="lead-source-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#205375]">
-                                    <option value="">Select Lead Source</option>
-                                    <option value="referral ads">Referral Ads</option>
-                                    <option value="social media">Social Media</option>
-                                    <option value="email campaign">Email Campaign</option>
-                                    <option value="direct contact">Direct Contact</option>
-                                    
-                                </select>
-                            </div>
+                        <div>
+                            <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                Filter by Lead Source  <x-filtericonblack class="w-4 h-4 ml-1" />
+                            </h3>
+                            <select id="lead-source-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                <option value="">Select Lead Source</option>
+                                <option value="referral ads">Referral Ads</option>
+                                <option value="social media">Social Media</option>
+                                <option value="email campaign">Email Campaign</option>
+                                <option value="direct contact">Direct Contact</option>
+                                
+                            </select>
                         </div>
                     </div>
-                    <button onclick="window.location.href='{{ route('clients.archive') }}'" class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
-                        <x-archiveicon class="w-5 h-5 mr-2" /> Archive
-                    </button>
-                    <button class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
-                        <x-addicon class="w-5 h-5 mr-2" /> Add New Client
-                    </button>
                 </div>
+                <button onclick="window.location.href='{{ route('clients.archive') }}'" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
+                    <x-archiveicon class="w-5 h-5 mr-2" /> Archive
+                </button>
+                <button class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
+                    <x-addicon class="w-5 h-5 mr-2" /> Add New Client
+                </button>
             </div>
+        </div>
 
-            <!-- Search Bar -->
-            <div class="flex flex-col md:flex-row items-center mb-6 space-y-2 md:space-y-0">
-                <input id="search-input" type="text" placeholder="Search" class="flex-1 px-4 py-2 text-[#205375] border rounded-md focus:outline-none focus:ring-2 focus:ring-[#205375] focus:border-transparent" />
-                <button id="search-button" class="bg-[#205375] text-white px-4 py-2 rounded-md hover:bg-[#102B3C] md:ml-2">Search</button>
-            </div>
+        <!-- Search Bar -->
+        <div class="flex flex-col md:flex-row items-center mb-8 space-y-2 md:space-y-0">
+            <input id="search-input" type="text" placeholder="Search" class="flex-1 px-5 py-3 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent shadow-sm" />
+            {{-- <button id="search-button" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-blue-700 shadow-md md:ml-4">Search</button> --}}
+        </div>
 
-         
-            <!-- Table -->
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <thead class="bg-[#205375] text-white">
-                        <tr>
-                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Full Name</th>
-                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Phone Number</th>
-                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Company Name</th>
-                            <th class="px-6 py-3 text-left font-semibold uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="client-table-body" class="divide-y divide-gray-200">
-                        <!-- Dynamic rows will be appended here -->
-                    </tbody>
-                </table>
-            </div>
+        <!-- Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead class="bg-[#205375] text-white">
+                    <tr>
+                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Full Name</th>
+                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Phone Number</th>
+                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Company Name</th>
+                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="client-table-body" class="divide-y divide-gray-200">
+                    <!-- Dynamic rows will be appended here -->
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -134,7 +132,7 @@
 
         function renderClients(clients) {
             tableBody.innerHTML = '';
-            clientCount.textContent = `(${clients.length} client lists)`;
+            clientCount.textContent = `${clients.length} client lists`; // Update count without parentheses
 
             clients.forEach(client => {
                 const row = document.createElement('tr');
