@@ -13,7 +13,7 @@
                 <button onclick="window.history.back()" class="bg-[#205375] text-white p-4 rounded-md hover:bg-[#102B3C]">
                     <x-backicon class="w-6 h-6" /> <!-- Replace with your back icon -->
                 </button>
-                <h1 class="text-2xl font-bold text-gray-800">Archive Lists</h1>
+                <h1 class="text-2xl font-bold text-gray-800">Archived Lists</h1>
                 <span id="archive-count" class="font-bold text-sm text-gray-500">(0 client lists)</span></h1>
             </div>
             <div class="relative w-full md:w-1/3">
@@ -120,7 +120,7 @@
 
         function renderArchivedClients(clients) {
             tableBody.innerHTML = '';
-            archiveCount.textContent = `(${clients.length} archive lists)`;
+            archiveCount.textContent = `(${clients.length} archived lists)`;
 
             clients.forEach(client => {
                 const row = document.createElement('tr');

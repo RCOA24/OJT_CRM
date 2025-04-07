@@ -39,22 +39,22 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div class="bg-white rounded-lg shadow-lg p-4">
                 <h2 class="text-xs font-semibold text-gray-600">TOTAL CLIENTS</h2>
-                <p class="text-2xl font-bold text-gray-800 TOTAL_CLIENTS">490</p>
+                <p class="text-2xl font-bold text-gray-800">490</p>
                 <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
             </div>
             <div class="bg-white rounded-lg shadow-lg p-4">
                 <h2 class="text-xs font-semibold text-gray-600">TOTAL USERS</h2>
-                <p class="text-2xl font-bold text-gray-800 TOTAL_USERS">20</p>
+                <p class="text-2xl font-bold text-gray-800">20</p>
                 <p class="text-sm text-red-500 font-semibold">-14% ↓</p>
             </div>
             <div class="bg-white rounded-lg shadow-lg p-4">
                 <h2 class="text-xs font-semibold text-gray-600">TOTAL LEADS</h2>
-                <p class="text-2xl font-bold text-gray-800 TOTAL_LEADS">456</p>
+                <p class="text-2xl font-bold text-gray-800">456</p>
                 <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
             </div>
             <div class="bg-white rounded-lg shadow-lg p-4">
                 <h2 class="text-xs font-semibold text-gray-600">PENDING TASK</h2>
-                <p class="text-2xl font-bold text-gray-800 PENDING_TASK">459</p>
+                <p class="text-2xl font-bold text-gray-800">459</p>
                 <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
             </div>
         </div>
@@ -238,36 +238,6 @@
                 }
             }
         });
-
-        const apiUrl = 'http://192.168.1.9:2030/api/Dashboard/stats'; // Replace with your API endpoint for dashboard stats
-
-        async function fetchDashboardData() {
-            try {
-                const response = await fetch(apiUrl, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': '1234'
-                    }
-                });
-                const data = await response.json();
-                updateDashboardStats(data);
-            } catch (error) {
-                console.error('Error fetching dashboard data:', error);
-            }
-        }
-
-        function updateDashboardStats(data) {
-            document.querySelector('.TOTAL_CLIENTS').textContent = data.totalClients || 0;
-            document.querySelector('.TOTAL_USERS').textContent = data.totalUsers || 0;
-            document.querySelector('.TOTAL_LEADS').textContent = data.totalLeads || 0;
-            document.querySelector('.PENDING_TASK').textContent = data.pendingTasks || 0;
-        }
-
-        // Polling every 10 seconds
-        setInterval(fetchDashboardData, 10000);
-
-        // Initial fetch
-        fetchDashboardData();
     });
 </script>
 @endsection

@@ -165,6 +165,12 @@
                 }
                 renderClients(sortedClients);
 
+                // Show flash message for the selected sort option
+                const sortMessage = sortType === 'asc' ? 'Sorted by Ascending' :
+                                    sortType === 'desc' ? 'Sorted by Descending' :
+                                    'Sorted by Recently Added';
+                showFlashMessage(sortMessage, 'success');
+
                 // Keep the dropdown open for better UX
                 sortDropdown.classList.remove('hidden');
             }
