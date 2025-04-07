@@ -179,7 +179,7 @@
         }
 
         // Polling every 10 seconds
-        setInterval(fetchArchivedClientsRealTime, 10000);
+        setInterval(fetchArchivedClientsRealTime, 1000);
 
         // Initial fetch
         fetchArchivedClientsRealTime();

@@ -248,7 +248,7 @@
         }
 
         // Polling every 10 seconds
-        setInterval(fetchClientsRealTime, 10000);
+        setInterval(fetchClientsRealTime, 1000);
 
         // Initial fetch
         fetchClientsRealTime();
