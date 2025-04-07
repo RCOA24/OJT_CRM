@@ -217,9 +217,8 @@
                     if (response.ok) {
                         showFlashMessage('Client archived successfully!', 'success');
                         console.log(`Client with ID ${clientId} archived successfully.`);
-                        // Remove the archived client from the table
-                        allClients = allClients.filter(client => client.clientId !== parseInt(clientId));
-                        renderClients(allClients);
+                        allClients = await fetchClients(`${apiUrl}?ascending=true&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`); // Reload data
+                        renderClients(allClients); // Refresh the list
                     } else {
                         const errorData = await response.json(); // Parse error response
                         console.error('Error response from server:', errorData);
@@ -232,26 +231,12 @@
             }
         });
 
-        async function fetchClientsRealTime() {
-            try {
-                const response = await fetch(`${apiUrl}?ascending=true&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': '1234'
-                    }
-                });
-                const data = await response.json();
-                renderClients(data.items || []);
-            } catch (error) {
-                console.error('Error fetching clients:', error);
+        document.addEventListener('visibilitychange', async () => {
+            if (document.visibilityState === 'visible') {
+                allClients = await fetchClients(`${apiUrl}?ascending=true&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`); // Reload data
+                renderClients(allClients); // Refresh the list
             }
-        }
-
-        // Polling every 10 seconds
-        setInterval(fetchClientsRealTime, 1000);
-
-        // Initial fetch
-        fetchClientsRealTime();
+        });
     });
 </script>
 @endsection
