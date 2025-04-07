@@ -52,8 +52,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
-        const apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archieve-clients';
-        const unarchiveUrl = 'http://192.168.1.9:2030/api/Clients/unarchive-client/';
+        const apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archieve-clients'; // Updated endpoint
+        const unarchiveUrl = 'http://192.168.1.9:2030/api/Clients/is-archived-client'; // Updated endpoint
         const tableBody = document.getElementById('archive-table-body');
         const archiveCount = document.getElementById('archive-count');
 
@@ -96,7 +96,7 @@
         async function unarchiveClient(clientId) {
             try {
                 console.log(`Attempting to unarchive client with ID: ${clientId}`);
-                const response = await fetch(`${unarchiveUrl}${clientId}`, {
+                const response = await fetch(`${unarchiveUrl}?isArchived=false&clientId=${clientId}`, { // Updated query parameters
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',

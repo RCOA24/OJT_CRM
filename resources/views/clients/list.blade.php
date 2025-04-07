@@ -30,9 +30,39 @@
                             </button>
                         </div>
                     </div>  
-                    <button class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
-                        <x-filtericon class="w-5 h-5 mr-2" /> Filters
-                    </button>
+                    <div class="relative">
+                        <button id="filter-button" class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
+                            <x-filtericon class="w-5 h-5 mr-2" /> Filters
+                        </button>
+                        <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded shadow-lg p-4">
+                            <div class="mb-4">
+                                <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                    Filter by Industry <x-filtericonblack class="w-4 h-4 ml-1" />
+                                </h3>
+                                <select id="industry-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#205375]">
+                                    <option value="">Select Industry</option>
+                                    <option value="Engineer">Engineer</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="IT Department">IT Department</option>
+                                    <option value="Basketball">Basketball</option>
+                                    <option value="Beverages">Beverages</option>
+                                </select>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                                    Filter by Lead Source  <x-filtericonblack class="w-4 h-4 ml-1" />
+                                </h3>
+                                <select id="lead-source-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#205375]">
+                                    <option value="">Select Lead Source</option>
+                                    <option value="referral ads">Referral Ads</option>
+                                    <option value="social media">Social Media</option>
+                                    <option value="email campaign">Email Campaign</option>
+                                    <option value="direct contact">Direct Contact</option>
+                                    
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                     <button onclick="window.location.href='{{ route('clients.archive') }}'" class="bg-[#205375] text-white px-4 py-2 rounded hover:bg-[#102B3C] flex items-center">
                         <x-archiveicon class="w-5 h-5 mr-2" /> Archive
                     </button>
@@ -48,6 +78,7 @@
                 <button id="search-button" class="bg-[#205375] text-white px-4 py-2 rounded-md hover:bg-[#102B3C] md:ml-2">Search</button>
             </div>
 
+         
             <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -73,12 +104,15 @@
     document.addEventListener('DOMContentLoaded', async () => {
         const apiUrl = 'http://192.168.1.9:2030/api/Clients/all-clients';
         const searchUrl = 'http://192.168.1.9:2030/api/Clients/search-client';
+        const archiveUrl = 'http://192.168.1.9:2030/api/Clients/is-archived-client'; // Updated endpoint
         const tableBody = document.getElementById('client-table-body');
         const clientCount = document.getElementById('client-count');
         const sortDropdown = document.getElementById('sort-dropdown');
         const sortButton = document.getElementById('sort-button');
         const searchInput = document.getElementById('search-input');
         const searchButton = document.getElementById('search-button');
+        const industryFilter = document.getElementById('industry-filter');
+        const leadSourceFilter = document.getElementById('lead-source-filter');
 
         let allClients = [];
 
@@ -213,7 +247,7 @@
                 }
                 try {
                     console.log(`Attempting to archive client with ID: ${clientId}`);
-                    const response = await fetch(`http://192.168.1.9:2030/api/Clients/archived-client/${clientId}`, {
+                    const response = await fetch(`${archiveUrl}?isArchived=true&clientId=${clientId}`, { // Updated query parameters
                         method: 'PUT',
                         headers: {
                             'Accept': 'application/json',
@@ -239,12 +273,67 @@
             }
         });
 
+        // Filter functionality
+        function applyFilters() {
+            const selectedIndustry = industryFilter.value;
+            const selectedLeadSource = leadSourceFilter.value;
+
+            const filteredClients = allClients.filter(client => {
+                const industryMatch = selectedIndustry ? client.companyDetails?.industryType === selectedIndustry : true;
+                const leadSourceMatch = selectedLeadSource ? client.clientDetails?.leadSources === selectedLeadSource : true;
+                return industryMatch && leadSourceMatch;
+            });
+
+            renderClients(filteredClients);
+        }
+
+        // Attach event listeners to filters
+        industryFilter.addEventListener('change', applyFilters);
+        leadSourceFilter.addEventListener('change', applyFilters);
+
         document.addEventListener('visibilitychange', async () => {
             if (document.visibilityState === 'visible') {
                 allClients = await fetchClients(`${apiUrl}?ascending=true&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`); // Reload data
                 renderClients(allClients); // Refresh the list
             }
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const filterButton = document.getElementById('filter-button');
+        const filterDropdown = document.getElementById('filter-dropdown');
+
+        // Toggle filter dropdown visibility
+        filterButton.addEventListener('click', () => {
+            filterDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!filterButton.contains(event.target) && !filterDropdown.contains(event.target)) {
+                filterDropdown.classList.add('hidden');
+            }
+        });
+
+        // Maintain existing filter functionality
+        const industryFilter = document.getElementById('industry-filter');
+        const leadSourceFilter = document.getElementById('lead-source-filter');
+
+        function applyFilters() {
+            const selectedIndustry = industryFilter.value;
+            const selectedLeadSource = leadSourceFilter.value;
+
+            const filteredClients = allClients.filter(client => {
+                const industryMatch = selectedIndustry ? client.companyDetails?.industryType === selectedIndustry : true;
+                const leadSourceMatch = selectedLeadSource ? client.clientDetails?.leadSources === selectedLeadSource : true;
+                return industryMatch && leadSourceMatch;
+            });
+
+            renderClients(filteredClients);
+        }
+
+        industryFilter.addEventListener('change', applyFilters);
+        leadSourceFilter.addEventListener('change', applyFilters);
     });
 </script>
 @endsection
