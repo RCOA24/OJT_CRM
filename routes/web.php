@@ -44,6 +44,11 @@ Route::post('/users/register', [AuthenticatedSessionController::class, 'register
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
 Route::get('/clients/archive', [ClientController::class, 'archive'])->name('clients.archive');
 
+// Add Client Route
+Route::get('/clients/add-client', function () {
+    return view('clients.add-client');
+})->name('clients.add');
+
 // Task Route
 Route::get('/task', function () {
     return view('task.index'); // Ensure this view exists

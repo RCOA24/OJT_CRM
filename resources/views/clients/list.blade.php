@@ -66,7 +66,8 @@
                 <button onclick="window.location.href='{{ route('clients.archive') }}'" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
                     <x-archiveicon class="w-5 h-5 mr-2" /> Archive
                 </button>
-                <button class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
+                <button onclick="window.location.href='{{ route('clients.add') }}'" 
+                        class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
                     <x-addicon class="w-5 h-5 mr-2" /> Add New Client
                 </button>
             </div>

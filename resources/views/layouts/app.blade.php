@@ -24,7 +24,7 @@
     position: fixed;
     width: 100%;
     height: 100vh;
-    background-color: rgba(255, 255, 255, 0.9); /* Light background */
+    background-color: rgba(255, 255, 255, 0.788); /* Light background */
     z-index: 9999;
 }
 
