@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="flex-1 p-4 bg-[#F5F7FA]">
-    <div class="container mx-auto bg-white shadow-xl rounded-lg p-20 max-w-[calc(100vw-2rem)] overflow-hidden">
+    <div class="pt-20 container mx-auto bg-white shadow-xl rounded-lg p-6 max-w-[calc(100vw-2rem)] overflow-hidden">
         
         <h1 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
             <button onclick="window.history.back()" class="bg-[#205375] text-white p-2 mr-3 rounded-full hover:bg-[#102B3C] shadow-md">
@@ -27,42 +27,81 @@
                         <div>
                             <label for="firstName" class="block text-xs font-medium text-[#344054]">First name</label>
                             
-                                <input type="text" id="firstName" name="firstName" 
-                                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                       placeholder="Mervin" required>
-                               
-                         
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-usericon class="w-4 h-4" />
+                                </span>
+                                <input type="text" id="firstName" name="firstName"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter First Name" required>
+                            </div>
                         </div>
+                        
                         <div>
                             <label for="middleName" class="block text-xs font-medium text-[#344054]">Middle name</label>
-                            <input type="text" id="middleName" name="middleName" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Ocharan">
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-usericon class="w-4 h-4" />
+                                </span>
+                                <input type="text" id="middleName" name="middleName"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter Middle Name">
+                            </div>
                         </div>
+                        
                         <div>
                             <label for="lastName" class="block text-xs font-medium text-[#344054]">Last name</label>
-                            <input type="text" id="lastName" name="lastName" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Dayandante" required>
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-usericon class="w-4 h-4" />
+                                </span>
+                                <input type="text" id="lastName" name="lastName"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter Last Name" required>
+                            </div>
                         </div>
+                        
                         <div>
                             <label for="email" class="block text-xs font-medium text-[#344054]">Email address</label>
-                            <input type="email" id="email" name="email" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="mervzz@gmail.com" required>
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-emailclienticon class="w-4 h-4" />
+                                </span>
+                                <input type="email" id="email" name="email"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter Email Address" required>
+                            </div>
                         </div>
+                        
                         <div>
                             <label for="mobileNumber" class="block text-xs font-medium text-[#344054]">Mobile number</label>
-                            <input type="text" id="mobileNumber" name="mobileNumber" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="+63 912 345 6789">
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-mobilenumberclienticon class="w-4 h-4" />
+                                </span>
+                                <input type="text" id="mobileNumber" name="mobileNumber"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter Mobile Number" required>
+                            </div>
                         </div>
+                        
                         <div>
                             <label for="websiteUrl" class="block text-xs font-medium text-[#344054]">Website URL</label>
-                            <input type="url" id="websiteUrl" name="websiteUrl" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="www.mervzd@gmail.com">
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-urlclienticon class="w-4 h-4" />
+                                </span>
+                                <input type="url" id="websiteUrl" name="websiteUrl"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter Website URL">
+                            </div>
                         </div>
+                        
                     </div>
 
                     <!-- Contact Person -->
@@ -70,10 +109,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label for="contactFullName" class="block text-xs font-medium text-[#344054]">Full name</label>
-                            <input type="text" id="contactFullName" name="contactFullName" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Ralph Raffy Concepcion Suarez">
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-usericon class="w-4 h-4" />
+                                </span>
+                                <input type="text" id="contactFullName" name="contactFullName"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter Full Name">
+                            </div>
                         </div>
+                        
                         <div>
                             <label for="jobTitle" class="block text-xs font-medium text-[#344054]">Job title</label>
                             <input type="text" id="jobTitle" name="jobTitle" 
@@ -84,7 +130,31 @@
                             <label for="department" class="block text-xs font-medium text-[#344054]">Department</label>
                             <input type="text" id="department" name="department" 
                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Odecci Solutions Inc.">
+                                   placeholder="Enter the Department">
+                        </div>
+                        <div>
+                            <label for="directEmail" class="block text-xs font-medium text-[#344054]">Email address</label>
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-emailclienticon class="w-4 h-4" />
+                                </span>
+                                <input type="email" id="directEmail" name="directEmail"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter the Email Address" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="directPhoneNumber" class="block text-xs font-medium text-[#344054]">Mobile number</label>
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-mobilenumberclienticon class="w-4 h-4" />
+                                </span>
+                                <input type="text" id="directPhoneNumber" name="directPhoneNumber"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter Mobile Number">
+                            </div>
                         </div>
                     </div>
 
@@ -93,10 +163,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label for="companyName" class="block text-xs font-medium text-[#344054]">Company name</label>
-                            <input type="text" id="companyName" name="companyName" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Odecci Solutions Inc.">
+                            
+                            <div class="relative mt-1">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <x-companyclienticon class="w-4 h-4" />
+                                </span>
+                                <input type="text" id="companyName" name="companyName"
+                                       class="block w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm"
+                                       placeholder="Enter the Company Name">
+                            </div>
                         </div>
+                        
                         <div>
                             <label for="industryType" class="block text-xs font-medium text-[#344054]">Industry type</label>
                             <input type="text" id="industryType" name="industryType" 
@@ -107,37 +184,37 @@
                             <label for="businessRegistrationNumber" class="block text-xs font-medium text-[#344054]">Business registration number</label>
                             <input type="text" id="businessRegistrationNumber" name="businessRegistrationNumber" 
                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="1234-567-8910">
+                                   placeholder="Enter the Business Registration Number">
                         </div>
                         <div>
                             <label for="numberOfEmployees" class="block text-xs font-medium text-[#344054]">Number of employees</label>
                             <input type="text" id="numberOfEmployees" name="numberOfEmployees" 
                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="20-59">
+                                   placeholder="Enter the Number of Employees">
                         </div>
                         <div>
                             <label for="city" class="block text-xs font-medium text-[#344054]">City</label>
                             <input type="text" id="city" name="city" 
                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Balagtas">
+                                   placeholder="Enter the City">
                         </div>
                         <div>
                             <label for="stateProvince" class="block text-xs font-medium text-[#344054]">State/Province</label>
                             <input type="text" id="stateProvince" name="stateProvince" 
                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Bulacan">
+                                   placeholder="Enter the State/Province">  
                         </div>
                         <div>
                             <label for="country" class="block text-xs font-medium text-[#344054]">Country</label>
                             <input type="text" id="country" name="country" 
                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Philippines">
+                                   placeholder="Enter the Country">
                         </div>
                         <div>
                             <label for="zipCode" class="block text-xs font-medium text-[#344054]">ZIP code</label>
                             <input type="text" id="zipCode" name="zipCode" 
                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="3016">
+                                   placeholder="Enter the ZIP code">
                         </div>
                     </div>
                 </div>
@@ -166,12 +243,17 @@
                                       placeholder="Enter notes"></textarea>
                         </div>
                         <div>
-                            <label for="photo" class="block text-xs font-medium text-[#344054]">Upload photo</label>
-                            <div class="border-dashed border-2 border-gray-300 rounded-lg p-4 flex justify-center items-center">
-                                <x-uploadicon class="w-8 h-8 text-gray-400" />
-                                <span class="text-xs text-gray-500 ml-2">Upload photo</span>
-                            </div>
+                            <label for="photo" class="block text-xs font-medium text-[#344054] py-2">Upload photo</label>
+                            
+                            <label for="photoUpload"
+                                   class="cursor-pointer border-dashed border-2 border-gray-300 rounded-lg p-6 flex justify-center items-center h-60 hover:border-blue-400 transition relative">
+                                <x-uploadicon class="w-12 h-12 text-gray-400" />
+                                <span class="text-sm text-gray-500 ml-3">Upload photo</span>
+                                <input id="photoUpload" name="photoUpload" type="file" class="hidden" accept="image/*" onchange="previewImage(event)" />
+                                <img id="photoPreview" class="absolute inset-0 w-full h-full object-cover rounded-lg hidden" />
+                            </label>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -192,4 +274,22 @@
         </form>
     </div>
 </div>
+
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('photoPreview');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+            };
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 @endsection
