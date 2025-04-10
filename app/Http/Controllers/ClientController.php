@@ -51,45 +51,10 @@ class ClientController extends Controller
             }
 
             $response = Http::withHeaders([
-                'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P', // Use Authorization header
+                'Authorization' => $token,
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ])->post($apiUrl, [
-                'photoLink' => $photoLink, // Use the URL of the uploaded photo
-                'firstName' => $request->input('firstName'),
-                'middleName' => $request->input('middleName'),
-                'lastName' => $request->input('lastName'),
-                'email' => $request->input('email'),
-                'phoneNumber' => $request->input('mobileNumber'),
-                'websiteUrl' => $request->input('websiteUrl'),
-                'company' => [
-                    'companyName' => $request->input('companyName'),
-                    'industryType' => $request->input('industryType'),
-                    'businessRegNumber' => $request->input('businessRegistrationNumber'),
-                    'companySize' => $request->input('numberOfEmployees'),
-                    'city' => $request->input('city'),
-                    'stateProvince' => $request->input('stateProvince'),
-                    'zipCode' => $request->input('zipCode'),
-                    'country' => $request->input('country'),
-                ],
-                'contact' => [
-                    [
-                        'contactName' => $request->input('contactFullName'),
-                        'jobTitle' => $request->input('jobTitle'),
-                        'department' => $request->input('department'),
-                        'directEmail' => $request->input('directEmail'),
-                        'directPhoneNumber' => $request->input('directPhoneNumber'),
-                    ]
-                ],
-                'details' => [
-                    'leadSources' => $request->input('leadSources') ?? 'N/A', // Default to 'N/A' if not provided
-                    'clientType' => $request->input('clientType') ?? 'N/A',   // Default to 'N/A' if not provided
-                    'notes' => $request->input('notes') ? [$request->input('notes')] : [], // Ensure notes is an array
-                ],
-            ]);
-
-            // Log the full payload for debugging
-            Log::info('Final Payload Sent to API:', [
                 'photoLink' => $photoLink,
                 'firstName' => $request->input('firstName'),
                 'middleName' => $request->input('middleName'),
@@ -123,54 +88,43 @@ class ClientController extends Controller
                 ],
             ]);
 
-            Log::info('Add Client API Response:', [
-                'status' => $response->status(),
-                'headers' => $response->headers(),
-                'body' => $response->body(),
-            ]);
-
-            if (!$response->successful()) {
-                Log::error('Add Client API Error Details:', [
-                    'status' => $response->status(),
-                    'headers' => $response->headers(),
-                    'body' => $response->body(),
-                ]);
-
-                // Fallback error message if the API does not provide details
-                $errorMessage = $response->json('message') ?? 'The server encountered an error. Please contact support.';
-                return back()->withErrors(['error' => $errorMessage]);
-            }
-
             if ($response->successful()) {
-                $responseBody = $response->json();
-
-                // Check if the response contains 'items' and handle accordingly
-                if (isset($responseBody['items']) && is_array($responseBody['items']) && count($responseBody['items']) > 0) {
-                    $clientData = $responseBody['items'][0]; // Extract the first item if 'items' exists
-                    return redirect()->route('clients.list')->with([
-                        'success' => 'Client added successfully.',
-                        'client' => $clientData,
-                        'redirectWithTimer' => true, // Add this flag for the timer
-                    ]);
-                }
-
-                // If 'items' is not present, fallback to a success message
-                return redirect()->route('clients.list')->with([
-                    'success' => 'Client added successfully.',
-                    'redirectWithTimer' => true, // Add this flag for the timer
-                ]);
+                return redirect()->route('clients.list')->with('success', 'Client added successfully.');
             } else {
                 $errorMessage = $response->json('message') ?? 'Failed to add client. Please try again.';
-                Log::error('Add Client API Error:', [
-                    'status' => $response->status(),
-                    'body' => $response->body(),
-                    'message' => $errorMessage,
-                ]);
                 return back()->withErrors(['error' => $errorMessage]);
             }
         } catch (\Exception $e) {
             Log::error('Add Client Exception:', ['error' => $e->getMessage()]);
             return back()->withErrors(['error' => 'An unexpected error occurred. Please try again.']);
+        }
+    }
+
+    public function showClient($id)
+    {
+        $apiUrl = "http://192.168.1.9:2030/api/Clients/client-info/{$id}";
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => 'application/json',
+            ])->get($apiUrl);
+
+            if ($response->successful()) {
+                $client = $response->json()[0] ?? null;
+
+                if (!$client) {
+                    return back()->withErrors(['error' => 'Client not found.']);
+                }
+
+                return view('clients.client-details', ['client' => $client]);
+            } else {
+                $errorMessage = $response->json('message') ?? 'Failed to fetch client details.';
+                return back()->withErrors(['error' => $errorMessage]);
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred.']);
         }
     }
 }

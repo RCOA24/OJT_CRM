@@ -107,8 +107,10 @@
                         @foreach (session('clients') as $client)
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 flex items-center">
-                                    <img src="{{ asset('images/adminprofile.svg') }}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
-                                    {{ $client['fullName'] ?? 'N/A' }}
+                                    <img src="{{ $client['photoLink'] ?? asset('images/adminprofile.svg') }}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                                    <a href="{{ route('clients.show', ['id' => $client['clientId']]) }}" class="text-blue-500 hover:underline">
+                                        {{ $client['fullName'] ?? 'N/A' }}
+                                    </a>
                                 </td>
                                 <td class="px-6 py-4 text-gray-600">{{ $client['email'] ?? 'N/A' }}</td>
                                 <td class="px-6 py-4 text-gray-600">{{ $client['phoneNumber'] ?? 'N/A' }}</td>
@@ -171,8 +173,10 @@
                 row.classList.add('hover:bg-gray-50');
                 row.innerHTML = `
                     <td class="px-6 py-4 flex items-center">
-                        <img src="{{ asset('images/adminprofile.svg') }}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
-                        ${client.fullName || 'N/A'}
+                        <img src="${client.photoLink || '{{ asset('images/adminprofile.svg') }}'}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                        <a href="/clients/${client.clientId}" class="text-blue-500 hover:underline">
+                            ${client.fullName || 'N/A'}
+                        </a>
                     </td>
                     <td class="px-6 py-4 text-gray-600">${client.email || 'N/A'}</td>
                     <td class="px-6 py-4 text-gray-600">${client.phoneNumber || 'N/A'}</td>

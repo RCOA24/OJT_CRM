@@ -13,8 +13,11 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// =========================
 // Authentication Routes
+// =========================
 Route::middleware('guest')->group(function () {
+    // Login Routes
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
@@ -30,32 +33,47 @@ Route::middleware('guest')->group(function () {
 // Logout Route
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
-// Dashboard Route
+// =========================
+// Dashboard Routes
+// =========================
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('/dashboard/get-counts', [DashboardController::class, 'getCounts']);
 
-// Users Routes
+// =========================
+// User Management Routes
+// =========================
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::get('/users/{id}', [UserController::class, 'getUser']);
 Route::put('/users/update/{id}', [UserController::class, 'updateUser'])->name('user.update');
 Route::post('/users/register', [AuthenticatedSessionController::class, 'register']);
 
-// Clients Routes
-Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
-Route::get('/clients/archive', [ClientController::class, 'archive'])->name('clients.archive');
-// Route::get('/clients/{id}', [ClientController::class, 'showClient'])->name('clients.show');
+// =========================
+// Client Management Routes
+// =========================
 
-// Add Client Route
+// List all clients
+Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
+
+// View archived clients
+Route::get('/clients/archive', [ClientController::class, 'archive'])->name('clients.archive');
+
+// Add a new client
 Route::get('/clients/add-client', function () {
     return view('clients.add-client');
 })->name('clients.add');
-
 Route::post('/clients/add-client', [ClientController::class, 'addClient'])->name('clients.store');
 
-// Task Route
+// View client details
+Route::get('/clients/{id}', [ClientController::class, 'showClient'])->name('clients.show');
+
+// =========================
+// Task Management Routes
+// =========================
 Route::get('/task', function () {
     return view('task.index'); // Ensure this view exists
 })->name('task');
 
-// Include authentication-related routes (registration, password reset, etc.)
+// =========================
+// Include Authentication-Related Routes
+// =========================
 require __DIR__.'/auth.php';

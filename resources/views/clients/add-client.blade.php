@@ -329,6 +329,7 @@
             <!-- Action Buttons -->
             <div class="flex justify-end space-x-3 mt-4">
                 <button type="button" 
+                        onclick="resetForm()" 
                         class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 shadow-md flex items-center text-sm space-x-2">
                     <x-cancelicon class="w-4 h-4" />
                     <span>Cancel</span>
@@ -344,6 +345,34 @@
 </div>
 
 <script>
+    function resetForm() {
+        const form = document.querySelector('form');
+        form.reset(); // Reset all form fields to their default values
+
+        // Clear the photo preview if it exists
+        const photoPreview = document.getElementById('photoPreview');
+        const photoUpload = document.getElementById('photoUpload');
+        if (photoPreview) {
+            photoPreview.src = '';
+            photoPreview.classList.add('hidden');
+        }
+        if (photoUpload) {
+            photoUpload.value = ''; // Clear the file input
+        }
+
+        // Clear success messages
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            successMessage.remove(); // Remove the success message if it exists
+        }
+
+        // Clear error messages
+        const errorMessages = document.querySelectorAll('.text-red-500, .bg-red-500');
+        errorMessages.forEach((error) => {
+            error.remove(); // Remove all error messages
+        });
+    }
+
     function previewImage(event) {
         const input = event.target;
         const preview = document.getElementById('photoPreview');
