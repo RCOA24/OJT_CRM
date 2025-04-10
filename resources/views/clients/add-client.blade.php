@@ -16,8 +16,76 @@
 
         <p class="text-sm text-gray-600 mb-4">Enter the information required to add this client.</p>
 
-        <form action="#" method="POST" class="space-y-6">
+        <form action="{{ route('clients.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
+            @if (session('success'))
+                <div class="mb-4 p-4 rounded-lg text-white bg-green-500">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if ($errors->any())
+                <div class="mb-4 p-4 rounded-lg text-white bg-red-500">
+                    {{ $errors->first('error') }}
+                </div>
+            @endif
+
+            @if (session('success') && session('client'))
+                <div id="success-message" class="mb-4 p-4 rounded-lg bg-green-100 text-green-800">
+                    <h2 class="font-bold text-lg">Client Added Successfully!</h2>
+                    <div class="flex items-center mt-2">
+                        <img src="{{ session('client')['photoLink'] }}" alt="Client Photo" class="w-16 h-16 rounded-full mr-4">
+                        <div>
+                            <p><strong>Name:</strong> {{ session('client')['fullName'] }}</p>
+                            <p><strong>Email:</strong> {{ session('client')['email'] }}</p>
+                            <p><strong>Phone:</strong> {{ session('client')['phoneNumber'] }}</p>
+                            <p><strong>Company:</strong> {{ session('client')['companyName'] }}</p>
+                            <p><strong>Website:</strong> <a href="{{ session('client')['websiteURL'] }}" class="text-blue-500 underline" target="_blank">{{ session('client')['websiteURL'] }}</a></p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="font-semibold">Company Details:</h3>
+                        <p><strong>Industry:</strong> {{ session('client')['companyDetails']['industryType'] }}</p>
+                        <p><strong>Business Reg. No:</strong> {{ session('client')['companyDetails']['businessRegNumber'] }}</p>
+                        <p><strong>Size:</strong> {{ session('client')['companyDetails']['companySize'] }}</p>
+                        <p><strong>Address:</strong> {{ session('client')['companyDetails']['companyAddress'] }}</p>
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="font-semibold">Contact Person:</h3>
+                        @foreach (session('client')['contactPerson'] as $contact)
+                            <p><strong>Name:</strong> {{ $contact['contactName'] }}</p>
+                            <p><strong>Job Title:</strong> {{ $contact['jobTitle'] }}</p>
+                            <p><strong>Department:</strong> {{ $contact['department'] }}</p>
+                            <p><strong>Email:</strong> {{ $contact['directEmail'] }}</p>
+                            <p><strong>Phone:</strong> {{ $contact['directPhone'] }}</p>
+                        @endforeach
+                    </div>
+                    <div class="mt-4">
+                        <h3 class="font-semibold">Client Details:</h3>
+                        <p><strong>Lead Sources:</strong> {{ session('client')['clientDetails']['leadSources'] }}</p>
+                        <p><strong>Client Type:</strong> {{ session('client')['clientDetails']['clientType'] }}</p>
+                        <p><strong>Notes:</strong></p>
+                        <ul class="list-disc ml-5">
+                            @foreach (session('client')['clientDetails']['notes'] as $note)
+                                <li>{{ $note }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
+                
+            @if (session('success') && session('redirectWithTimer'))
+                <div id="success-message" class="mb-4 p-4 rounded-lg bg-green-100 text-green-800">
+                    <h2 class="font-bold text-lg">Client Added Successfully!</h2>
+                    <p>You will be redirected shortly...</p>
+                </div>
+                <script>
+                    document.addEventListener('DOMContentLoaded', () => {
+                        setTimeout(() => {
+                            window.location.href = "{{ route('clients.list') }}"; // Redirect to the clients list
+                        }, 5000); // 5 seconds
+                    });
+                </script>
+            @endif
 
             <div class="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">
                 <!-- Left Column -->
@@ -291,5 +359,16 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            setTimeout(() => {
+                successMessage.style.transition = 'opacity 0.5s';
+                successMessage.style.opacity = '0';
+                setTimeout(() => successMessage.remove(), 500); // Remove the element after fading out
+            }, 3000); // 5 seconds
+        }
+    });
 </script>
 @endsection

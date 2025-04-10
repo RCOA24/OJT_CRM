@@ -16,7 +16,7 @@ class UserController extends Controller
     
         // Fetch data from API with pagination and search
         $response = Http::withHeaders([
-            'Authorization' => '1234',
+            'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
             'Accept' => 'application/json',
         ])->get('http://192.168.1.9:2030/api/Users/all-users', [
             'page' => $page,
@@ -76,7 +76,7 @@ class UserController extends Controller
     public function getUser($id)
     {
         $response = Http::withHeaders([
-            'Authorization' => '1234',
+            'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
             'Accept' => 'application/json',
         ])->get("http://192.168.1.9:2030/api/Users/{$id}");
 
@@ -90,7 +90,7 @@ class UserController extends Controller
     public function updateUser(Request $request, $id)
     {
         $response = Http::withHeaders([
-            'Authorization' => '1234',
+            'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
             'Accept' => 'application/json',
         ])->put("http://192.168.1.9:2030/api/Users/update/{$id}", $request->all());
 

@@ -81,7 +81,7 @@
                 const response = await fetch(apiUrl, {
                     headers: {
                         'Accept': 'application/json',
-                        'Authorization': '1234'
+                        'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P'
                     }
                 });
                 const data = await response.json();
@@ -98,7 +98,7 @@
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
-                        'Authorization': '1234'
+                        'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P'
                     }
                 });
                 if (response.ok) {

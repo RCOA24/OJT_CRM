@@ -26,7 +26,7 @@ class AuthenticatedSessionController extends Controller
 
     // Send request to API with Authorization header
     $response = Http::withHeaders([
-        'Authorization' => '1234',
+        'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
         'Accept' => 'application/json',
         'Content-Type' => 'application/json',
     ])->post($apiUrl, [
@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
         $data = $response->json();
 
         // Store token in session
-        session(['api_token' => $data['token']]);
+        // session(['api_token' => $data['token']]);
 
         // Flash success message
         return redirect()->route('dashboard')->with('success', 'Login successful!');
@@ -70,7 +70,7 @@ public function register(Request $request)
     try {
         // Send request to external API
         $response = Http::withHeaders([
-            'Authorization' => '1234',
+            'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
             'Accept' => 'application/json',
             'Content-Type' => 'application/json',
         ])->post($apiUrl, [

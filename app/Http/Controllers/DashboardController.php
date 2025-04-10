@@ -15,7 +15,7 @@ class DashboardController extends Controller
         try {
             // Fetch total clients
             $clientsResponse = Http::withHeaders([
-                'Authorization' => '1234',
+                'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
                 'Accept' => 'application/json',
                 'Cache-Control' => 'no-cache', // Ensure fresh data
                 'Pragma' => 'no-cache',
@@ -23,7 +23,7 @@ class DashboardController extends Controller
 
             // Fetch total users
             $usersResponse = Http::withHeaders([
-                'Authorization' => '1234',
+                'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
                 'Accept' => 'application/json',
                 'Cache-Control' => 'no-cache', // Ensure fresh data
                 'Pragma' => 'no-cache',

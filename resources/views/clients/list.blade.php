@@ -6,6 +6,17 @@
 <div class="flex-1 p-6 bg-[#FAFBFB] pt-20">
     <div class="container mx-auto bg-white shadow-lg rounded-xl p-8 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] overflow-auto">
         <!-- Flash Message -->
+        @if (session('success'))
+            <div class="mb-4 p-4 rounded-lg text-white bg-green-500">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if ($errors->any())
+            <div class="mb-4 p-4 rounded-lg text-white bg-red-500">
+                {{ $errors->first('error') }}
+            </div>
+        @endif
+        <!-- Flash Message -->
         <div id="flash-message" class="hidden mb-4 p-4 rounded-lg text-white transition-all duration-500 transform opacity-0 scale-95 "></div>
         
         <!-- Header -->
@@ -92,7 +103,27 @@
                     </tr>
                 </thead>
                 <tbody id="client-table-body" class="divide-y divide-gray-200">
-                    <!-- Dynamic rows will be appended here -->
+                    @if (session('clients'))
+                        @foreach (session('clients') as $client)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 flex items-center">
+                                    <img src="{{ asset('images/adminprofile.svg') }}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                                    {{ $client['fullName'] ?? 'N/A' }}
+                                </td>
+                                <td class="px-6 py-4 text-gray-600">{{ $client['email'] ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 text-gray-600">{{ $client['phoneNumber'] ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 text-gray-600">{{ $client['companyName'] ?? 'N/A' }}</td>
+                                <td class="px-6 py-4 flex items-center space-x-4">
+                                    <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                                    <button class="text-red-500 hover:underline archive-button" data-id="{{ $client['clientId'] }}">Archive</button>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">No clients found.</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -120,7 +151,7 @@
                 const response = await fetch(url, {
                     headers: {
                         'Accept': 'application/json',
-                        'Authorization': '1234'
+                        'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P'
                     }
                 });
                 const data = await response.json();
@@ -250,7 +281,7 @@
                         method: 'PUT',
                         headers: {
                             'Accept': 'application/json',
-                            'Authorization': '1234', // Ensure this token is valid
+                            'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P', // Ensure this token is valid
                             'Content-Type': 'application/json'
                         }
                     });

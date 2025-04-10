@@ -63,7 +63,7 @@ class NewPasswordController extends Controller
 
             // Send the request to the API with a timeout
             $resetResponse = Http::withHeaders([
-                'Authorization' => '1234', // Ensure this token is valid
+                'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P', // Ensure this token is valid
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ])->timeout(10) // Set a timeout of 10 seconds

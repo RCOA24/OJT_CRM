@@ -205,7 +205,7 @@
             const response = await fetch(`http://192.168.1.9:2030/api/Users/update/${userId}`, {
                 method: "PUT",
                 headers: {
-                    "Authorization": "1234",
+                    "Authorization": "YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P",
                     "Accept": "application/json",
                     "Content-Type": "application/json"
                 },

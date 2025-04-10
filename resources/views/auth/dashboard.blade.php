@@ -320,7 +320,7 @@
             try {
                 const response = await fetch(`${searchApiUrl}?search=${query}`, {
                     headers: {
-                        'Authorization': '1234',
+                        'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
                         'Accept': 'application/json'
                     }
                 });

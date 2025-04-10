@@ -43,11 +43,14 @@ Route::post('/users/register', [AuthenticatedSessionController::class, 'register
 // Clients Routes
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
 Route::get('/clients/archive', [ClientController::class, 'archive'])->name('clients.archive');
+// Route::get('/clients/{id}', [ClientController::class, 'showClient'])->name('clients.show');
 
 // Add Client Route
 Route::get('/clients/add-client', function () {
     return view('clients.add-client');
 })->name('clients.add');
+
+Route::post('/clients/add-client', [ClientController::class, 'addClient'])->name('clients.store');
 
 // Task Route
 Route::get('/task', function () {
