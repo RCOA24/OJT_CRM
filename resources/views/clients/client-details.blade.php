@@ -35,7 +35,8 @@
             <!-- Left Section -->
             <div class="lg:col-span-1 space-y-6">
                 <div class="bg-gray-200 rounded-xl relative">
-                    <img src="{{ $client['backgroundImage'] ?? 'default-bg.jpg' }}" alt="Background" class="w-full h-40 object-cover rounded-t-xl">
+                    <img src="{{ asset($client['backgroundImage'] ?? 'images/example.jpg') }}" alt="Background" class="w-full h-40 object-cover rounded-t-xl">
+
                     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
                         <img src="{{ $client['photoLink'] }}" alt="Client Photo" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
                     </div>
