@@ -96,6 +96,8 @@ Route::put('/clients/unarchive', [ClientController::class, 'unarchiveClient'])->
 Route::get('/task', [TaskController::class, 'index'])->name('task');
 // Search tasks
 Route::get('/task/search', [TaskController::class, 'searchTasks'])->name('task.search');
+// Store tasks
+Route::post('/task/store', [TaskController::class, 'store'])->name('task.store');
     
 // =========================
 // Include Authentication-Related Routes

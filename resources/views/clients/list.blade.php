@@ -105,7 +105,7 @@
                 </thead>
                 <tbody id="client-table-body" class="divide-y divide-gray-200">
                     @forelse ($clients as $client)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-gray-200 transition duration-200 ease-in-out">
                             <td class="px-6 py-4 flex items-center">
                                 <img src="{{ $client['photoLink'] ?? asset('images/adminprofile.svg') }}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
                                 <a href="{{ route('clients.show', ['id' => $client['clientId']]) }}" class="text-blue-500 hover:underline">

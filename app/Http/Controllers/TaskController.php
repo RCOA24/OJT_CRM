@@ -63,4 +63,34 @@ class TaskController extends Controller
             return redirect()->route('task')->withErrors(['error' => 'An error occurred while searching for tasks.']);
         }
     }
+
+    public function store(Request $request)
+    {
+        $apiUrl = 'http://192.168.1.9:2030/api/Task/add-task';
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])->post($apiUrl, [
+                'taskID' => $request->input('taskID'),
+                'taskTitle' => $request->input('taskTitle'),
+                'taskType' => $request->input('taskType'),
+                'assignedTo' => $request->input('assignedTo'),
+                'priority' => $request->input('priority'),
+                'dueDate' => $request->input('dueDate'),
+                'status' => $request->input('status'),
+            ]);
+
+            if ($response->successful()) {
+                return redirect()->route('task')->with('success', 'New task successfully saved!');
+            } else {
+                return back()->withErrors(['error' => 'Failed to save the task.']);
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An error occurred while saving the task.']);
+        }
+    }
 }

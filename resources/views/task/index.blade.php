@@ -3,6 +3,7 @@
 @section('title', 'Tasks')
 
 @include('components.sidebar')
+@include('task.create-task-modal')
 
 @section('content')
 <div class="flex-1 p-4 sm:p-6 bg-[#F9FAFB] pt-20">
@@ -29,7 +30,7 @@
                 <button id="filter-button" class="bg-[#205375] text-white px-4 md:px-6 py-3 rounded-full hover:bg-[#102B3C] flex items-center shadow-md">
                     <x-filtericon class="w-5 h-5 mr-2" /> Filters
                 </button>
-                <button onclick="window.location.href='{{ route('clients.add') }}'" 
+                <button onclick="toggleModal('create-task-modal')" 
                         class="bg-[#205375] text-white px-4 md:px-6 py-3 rounded-full hover:bg-[#102B3C] flex items-center shadow-md">
                     <x-addicon class="w-5 h-5 mr-2" /> Add Task
                 </button>
@@ -37,10 +38,10 @@
         </div>
 
         <!-- Task Table -->
-        <div class="overflow-x-auto rounded-lg shadow">
+        <div class="overflow-x-auto rounded-xl shadow">
             <table class="min-w-full bg-white">
-                <thead class="bg-gray-100 border-b">
-                    <tr class="text-left text-sm md:text-base font-medium text-gray-600">
+                <thead class="bg-[#205375] border-b">
+                    <tr class="text-left text-sm md:text-base font-medium text-white">
                         <th class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></th>
                         <th class="py-3 md:py-4 px-4 md:px-6">Task ID</th>
                         <th class="py-3 md:py-4 px-4 md:px-6">Task Title</th>
@@ -55,7 +56,7 @@
                 <tbody id="task-table-body">
                     @if (!empty($tasks) && count($tasks) > 0)
                         @foreach ($tasks as $task)
-                        <tr class="text-sm md:text-base text-gray-700 hover:bg-gray-50 transition">
+                        <tr class="text-sm md:text-base text-[#444444] hover:bg-gray-200 transition duration-200 ease-in-out">
                             <td class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['taskID'] }}</td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['taskTitle'] }}</td>
@@ -124,7 +125,10 @@
                             </span>
                         </td>   
                         <td class="py-3 md:py-4 px-4 md:px-6">
-                            <button class="text-red-500 hover:underline">Delete</button>
+                            <div class="flex items-center space-x-2">
+                                <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                                <button class="text-red-500 hover:underline">Archive</button>
+                            </div>
                         </td>
                     </tr>
                 `;
