@@ -18,6 +18,7 @@ Route::get('/', function () {
 // Authentication Routes
 // =========================
 Route::middleware('guest')->group(function () {
+    // Routes for login, password reset, and registration
     // Login Routes
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -38,11 +39,13 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 // Dashboard Routes
 // =========================
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+// Route to fetch dashboard counts
 Route::get('/dashboard/get-counts', [DashboardController::class, 'getCounts']);
 
 // =========================
 // User Management Routes
 // =========================
+// Routes for managing users (list, update, register)
 Route::get('/users', [UserController::class, 'index'])->name('users');
 Route::get('/users/{id}', [UserController::class, 'getUser']);
 Route::put('/users/update/{id}', [UserController::class, 'updateUser'])->name('user.update');
@@ -51,7 +54,7 @@ Route::post('/users/register', [AuthenticatedSessionController::class, 'register
 // =========================
 // Client Management Routes
 // =========================
-
+// Routes for managing clients (list, fetch, search, archive, etc.)
 // List all clients
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
 
@@ -88,6 +91,7 @@ Route::put('/clients/unarchive', [ClientController::class, 'unarchiveClient'])->
 // =========================
 // Task Management Routes
 // =========================
+// Routes for managing tasks
 Route::get('/task', [TaskController::class, 'index'])->name('task');
 
 // =========================

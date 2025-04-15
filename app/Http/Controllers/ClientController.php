@@ -16,15 +16,16 @@ class ClientController extends Controller
         try {
             // Extract query parameters for sorting and filtering
             $queryParams = [
-                'ascending' => $request->query('ascending', 'true'),
-                'sortByRecentlyAdded' => $request->query('sortByRecentlyAdded', 'false'),
+                'ascending' => $request->query('ascending', 'true'), // Default to ascending
+                'sortByRecentlyAdded' => $request->query('sortByRecentlyAdded', 'false'), // Default to not recently added
                 'pageNumber' => $request->query('pageNumber', 1),
                 'pageSize' => $request->query('pageSize', 10),
-                'isArchived' => 'false',
-                'industryType' => $request->query('industryType', ''),
-                'leadSource' => $request->query('leadSource', ''),
+                'isArchived' => 'false', // Ensure only non-archived clients are fetched
+                'industryType' => $request->query('industryType', ''), // Filter by industry type
+                'leadSource' => $request->query('leadSource', ''), // Filter by lead source
             ];
 
+            // Log the query parameters for debugging
             Log::info('Fetching clients with query parameters', $queryParams);
 
             $response = Http::withHeaders([
@@ -32,22 +33,15 @@ class ClientController extends Controller
                 'Accept' => 'application/json',
             ])->get($apiUrl, $queryParams);
 
-            // Log the response for debugging
-            Log::info('API Response', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-
             if ($response->successful()) {
-                $clients = $response->json('items') ?? [];
-                return response()->json($clients); // Return JSON response for AJAX
+                return response()->json($response->json('items') ?? []);
             } else {
                 Log::error('Failed to fetch clients', ['response' => $response->body()]);
-                return response()->json(['error' => 'Failed to fetch clients.'], $response->status());
+                return response()->json([], 500);
             }
         } catch (\Exception $e) {
             Log::error('Error fetching clients:', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'An error occurred while fetching clients.'], 500);
+            return response()->json([], 500);
         }
     }
 
@@ -58,26 +52,20 @@ class ClientController extends Controller
 
         try {
             $query = $request->query('query', '');
-
-            if (empty($query)) {
-                return redirect()->route('clients.list')->withErrors(['error' => 'Please enter a name to search.']);
-            }
-
             $response = Http::withHeaders([
                 'Authorization' => $authorization,
                 'Accept' => 'application/json',
             ])->get($searchUrl, ['query' => $query]);
 
             if ($response->successful()) {
-                $clients = $response->json('items') ?? [];
-                return view('clients.list', compact('clients'))->with('success', "Showing results for \"$query\"");
+                return response()->json($response->json('items') ?? []);
             } else {
                 Log::error('Failed to search clients', ['response' => $response->body()]);
-                return redirect()->route('clients.list')->withErrors(['error' => 'Failed to fetch search results.']);
+                return response()->json([], 500);
             }
         } catch (\Exception $e) {
             Log::error('Error searching clients:', ['error' => $e->getMessage()]);
-            return redirect()->route('clients.list')->withErrors(['error' => 'An error occurred while searching.']);
+            return response()->json([], 500);
         }
     }
 
@@ -156,18 +144,12 @@ class ClientController extends Controller
         $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
         try {
-            $query = $request->query('query', '');
             $queryParams = [
-                'ascending' => 'true',
-                'sortByRecentlyAdded' => 'false',
                 'pageNumber' => 1,
                 'pageSize' => 10,
+                'ascending' => 'true', // Ensure this is a string
+                'sortByRecentlyAdded' => 'false', // Ensure this is a string
             ];
-
-                // Add search query if provided
-            if (!empty($query)) {
-                $queryParams['name'] = $query;
-            }
 
             $response = Http::withHeaders([
                 'Authorization' => $authorization,
@@ -175,17 +157,18 @@ class ClientController extends Controller
             ])->get($apiUrl, $queryParams);
 
             if ($response->successful()) {
-                $clients = $response->json('items') ?? [];
-                $flashMessage = !empty($query) ? "Showing results for \"$query\"" : null;
-                return view('clients.list', compact('clients'))->with('success', $flashMessage);
+                $clients = $response->json('items') ?? []; // Extract the "items" array from the API response
+                Log::info('Clients fetched successfully', ['clients' => $clients]); // Debugging log
             } else {
+                $clients = []; // Default to an empty array if the response is not successful
                 Log::error('Failed to fetch clients', ['response' => $response->body()]);
-                return redirect()->route('clients.list')->withErrors(['error' => 'Failed to fetch clients.']);
             }
         } catch (\Exception $e) {
+            $clients = []; // Default to an empty array in case of an exception
             Log::error('Error fetching clients:', ['error' => $e->getMessage()]);
-            return redirect()->route('clients.list')->withErrors(['error' => 'An error occurred while fetching clients.']);
         }
+
+        return view('clients.list', compact('clients'));
     }
 
     public function archive()

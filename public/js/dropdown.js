@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const sortType = button.getAttribute('data-sort');
             const queryParams = new URLSearchParams();
 
+            // Append sorting parameters based on the selected option
             if (sortType === 'asc') {
                 queryParams.append('ascending', 'true');
                 showFlashMessage('Sorted by Ascending');
@@ -44,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showFlashMessage('Sorted by Recently Added');
             }
 
+            // Fetch clients with the updated query parameters
             await fetchClients(queryParams);
             sortDropdown.classList.add('hidden'); // Close dropdown after selection
         });
@@ -56,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const leadSource = document.getElementById('lead-source-filter').value;
             const queryParams = new URLSearchParams();
 
+            // Append filter parameters based on the selected options
             if (industry) {
                 queryParams.append('industryType', industry);
                 showFlashMessage(`Filtered by Industry: ${industry}`);
@@ -65,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showFlashMessage(`Filtered by Lead Source: ${leadSource}`);
             }
 
+            // Fetch clients with the updated query parameters
             await fetchClients(queryParams);
         });
     });
@@ -80,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 const clients = await response.json();
-                renderClients(clients);
+                renderClients(clients); // Render the fetched clients in the table
             } else {
                 const errorData = await response.json();
                 console.error('Failed to fetch clients:', errorData.error || response.statusText);
@@ -96,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderClients(clients) {
         clientTableBody.innerHTML = '';
 
+        // Display a message if no clients are found
         if (clients.length === 0) {
             clientTableBody.innerHTML = `
                 <tr>
@@ -105,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Dynamically render each client row
         clients.forEach(client => {
             const row = `
                 <tr class="hover:bg-gray-50">
@@ -135,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         flashMessage.classList.remove('hidden', 'opacity-0', 'scale-95');
         flashMessage.classList.add('opacity-100', 'scale-100');
 
+        // Hide the flash message after a delay
         setTimeout(() => {
             flashMessage.classList.remove('opacity-100', 'scale-100');
             flashMessage.classList.add('opacity-0', 'scale-95');
