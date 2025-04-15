@@ -41,6 +41,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 // Route to fetch dashboard counts
 Route::get('/dashboard/get-counts', [DashboardController::class, 'getCounts']);
+Route::get('/dashboard/fetch-counts', [DashboardController::class, 'fetchCounts'])->name('dashboard.fetchCounts');
 
 // =========================
 // User Management Routes
@@ -93,7 +94,9 @@ Route::put('/clients/unarchive', [ClientController::class, 'unarchiveClient'])->
 // =========================
 // Routes for managing tasks
 Route::get('/task', [TaskController::class, 'index'])->name('task');
-
+// Search tasks
+Route::get('/task/search', [TaskController::class, 'searchTasks'])->name('task.search');
+    
 // =========================
 // Include Authentication-Related Routes
 // =========================

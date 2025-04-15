@@ -80,7 +80,7 @@
                @click.prevent="activeItem = '/task'; window.location.href='{{ route('task') }}'">
                 <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-2xl transition-shadow">
                     <h2 class="text-xs font-semibold text-gray-600">PENDING TASK</h2>
-                    <p class="text-3xl font-extrabold text-gray-800">459</p>
+                    <p id="pending-tasks-count" class="text-3xl font-extrabold text-gray-800">(0)</p>
                     <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
                 </div>
             </a>
@@ -193,6 +193,7 @@
         </div>
     </div>
 </div>
+<script src="{{ asset('js/dashboard.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -272,44 +273,7 @@
         });
     });
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        const totalClientsCount = document.getElementById('total-clients-count');
-        const totalUsersCount = document.getElementById('total-users-count');
-        const countsApiUrl = '/dashboard/get-counts'; // New endpoint
-
-        async function fetchCounts() {
-            try {
-                const response = await fetch(countsApiUrl, {
-                    headers: {
-                        'Cache-Control': 'no-cache', // Ensure fresh data
-                        'Pragma': 'no-cache',
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-
-                // Debugging: Log the fetched data
-                console.log('Fetched Counts:', data);
-
-                // Update the counts without parentheses
-                totalClientsCount.textContent = data.totalClients;
-                totalUsersCount.textContent = data.totalUsers;
-            } catch (error) {
-                console.error('Error fetching counts:', error);
-                totalClientsCount.textContent = 'Error';
-                totalUsersCount.textContent = 'Error';
-            }
-        }
-
-        // Fetch counts initially and then every 10 seconds
-        fetchCounts();
-        setInterval(fetchCounts, 10000);
-    });
-
+    
     document.addEventListener('DOMContentLoaded', () => {
         const searchInput = document.getElementById('global-search-input');
         const searchResultsDropdown = document.getElementById('search-results-dropdown');
