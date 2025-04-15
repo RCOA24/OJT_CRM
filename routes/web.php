@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect Home Page to Login
@@ -69,9 +70,7 @@ Route::get('/clients/{id}', [ClientController::class, 'showClient'])->name('clie
 // =========================
 // Task Management Routes
 // =========================
-Route::get('/task', function () {
-    return view('task.index'); // Ensure this view exists
-})->name('task');
+Route::get('/task', [TaskController::class, 'index'])->name('task');
 
 // =========================
 // Include Authentication-Related Routes

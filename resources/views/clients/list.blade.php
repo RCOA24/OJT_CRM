@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="flex-1 p-6 bg-[#FAFBFB] pt-20">
-    <div class="container mx-auto bg-white shadow-lg rounded-xl p-8 max-w-[calc(100vw-2rem)] max-h-[calc(100vh-4rem)] overflow-auto">
+    <div class="container mx-auto bg-white shadow-md rounded-xl p-4 sm:p-8">
         <!-- Flash Message -->
         @if (session('success'))
             <div class="mb-4 p-4 rounded-lg text-white bg-green-500">
