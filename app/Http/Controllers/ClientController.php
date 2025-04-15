@@ -8,26 +8,209 @@ use Illuminate\Support\Facades\Log;
 
 class ClientController extends Controller
 {
+    public function fetchClients(Request $request)
+    {
+        $apiUrl = 'http://192.168.1.9:2030/api/Clients/all-clients';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            // Extract query parameters for sorting and filtering
+            $queryParams = [
+                'ascending' => $request->query('ascending', 'true'),
+                'sortByRecentlyAdded' => $request->query('sortByRecentlyAdded', 'false'),
+                'pageNumber' => $request->query('pageNumber', 1),
+                'pageSize' => $request->query('pageSize', 10),
+                'isArchived' => 'false',
+                'industryType' => $request->query('industryType', ''),
+                'leadSource' => $request->query('leadSource', ''),
+            ];
+
+            Log::info('Fetching clients with query parameters', $queryParams);
+
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->get($apiUrl, $queryParams);
+
+            // Log the response for debugging
+            Log::info('API Response', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            if ($response->successful()) {
+                $clients = $response->json('items') ?? [];
+                return response()->json($clients); // Return JSON response for AJAX
+            } else {
+                Log::error('Failed to fetch clients', ['response' => $response->body()]);
+                return response()->json(['error' => 'Failed to fetch clients.'], $response->status());
+            }
+        } catch (\Exception $e) {
+            Log::error('Error fetching clients:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'An error occurred while fetching clients.'], 500);
+        }
+    }
+
+    public function searchClients(Request $request)
+    {
+        $searchUrl = 'http://192.168.1.9:2030/api/Clients/search-client';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $query = $request->query('query', '');
+
+            if (empty($query)) {
+                return redirect()->route('clients.list')->withErrors(['error' => 'Please enter a name to search.']);
+            }
+
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->get($searchUrl, ['query' => $query]);
+
+            if ($response->successful()) {
+                $clients = $response->json('items') ?? [];
+                return view('clients.list', compact('clients'))->with('success', "Showing results for \"$query\"");
+            } else {
+                Log::error('Failed to search clients', ['response' => $response->body()]);
+                return redirect()->route('clients.list')->withErrors(['error' => 'Failed to fetch search results.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error searching clients:', ['error' => $e->getMessage()]);
+            return redirect()->route('clients.list')->withErrors(['error' => 'An error occurred while searching.']);
+        }
+    }
+
+    public function archiveClient(Request $request)
+    {
+        $archiveUrl = 'http://192.168.1.9:2030/api/Clients/is-archived-client';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $clientId = $request->input('clientId');
+
+            // Log the request data for debugging
+            Log::info('Archiving client', ['clientId' => $clientId]);
+
+            // Ensure the clientId is being sent correctly
+            if (empty($clientId)) {
+                Log::error('Client ID is missing or invalid.');
+                return redirect()->route('clients.list')->withErrors(['error' => 'Client ID is missing or invalid.']);
+            }
+            
+            // Send the request with query parameters
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->put("$archiveUrl?isArchived=true&clientId=$clientId");
+
+            // Log the API response for debugging
+            Log::info('Archive client response', ['status' => $response->status(), 'body' => $response->body()]);
+
+            if ($response->successful() && $response->body() !== '"Client not found"') {
+                // Fetch the updated client list
+                $clientsResponse = Http::withHeaders([
+                    'Authorization' => $authorization,
+                    'Accept' => 'application/json',
+                ])->get('http://192.168.1.9:2030/api/Clients/all-clients', [
+                    'pageNumber' => 1,
+                    'pageSize' => 10,
+                    'ascending' => 'true',
+                    'sortByRecentlyAdded' => 'false',
+                ]);
+
+                $clients = $clientsResponse->successful() ? $clientsResponse->json('items') ?? [] : [];
+
+                return view('clients.list', [
+                    'clients' => $clients,
+                    'success' => 'Client archived successfully.',
+                ]);
+            } else {
+                Log::error('Failed to archive client', ['response' => $response->body()]);
+                return redirect()->route('clients.list')->withErrors(['error' => 'Failed to archive client.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error archiving client:', ['error' => $e->getMessage()]);
+            return redirect()->route('clients.list')->withErrors(['error' => 'An error occurred while archiving the client.']);
+        }
+    }
+
+    public function filterClients(Request $request)
+    {
+        $allClients = $this->fetchClients($request)->getData();
+        $industry = $request->query('industry', '');
+        $leadSource = $request->query('leadSource', '');
+
+        $filteredClients = array_filter($allClients, function ($client) use ($industry, $leadSource) {
+            $industryMatch = $industry ? ($client['companyDetails']['industryType'] ?? '') === $industry : true;
+            $leadSourceMatch = $leadSource ? ($client['clientDetails']['leadSources'] ?? '') === $leadSource : true;
+            return $industryMatch && $leadSourceMatch;
+        });
+
+        return response()->json(array_values($filteredClients));
+    }
+
     public function index(Request $request)
     {
-        $search = $request->query('search', '');
-        $clients = Http::withHeaders([
-            'Authorization' => 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
-            'Accept' => 'application/json',
-        ])->get('http://192.168.1.9:2030/api/Clients/all-clients', [
-            'search' => $search,
-        ]);
+        $apiUrl = 'http://192.168.1.9:2030/api/Clients/all-clients';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
-        return view('clients.list', ['clients' => $clients->json()]);
+        try {
+            $query = $request->query('query', '');
+            $queryParams = [
+                'ascending' => 'true',
+                'sortByRecentlyAdded' => 'false',
+                'pageNumber' => 1,
+                'pageSize' => 10,
+            ];
+
+                // Add search query if provided
+            if (!empty($query)) {
+                $queryParams['name'] = $query;
+            }
+
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->get($apiUrl, $queryParams);
+
+            if ($response->successful()) {
+                $clients = $response->json('items') ?? [];
+                $flashMessage = !empty($query) ? "Showing results for \"$query\"" : null;
+                return view('clients.list', compact('clients'))->with('success', $flashMessage);
+            } else {
+                Log::error('Failed to fetch clients', ['response' => $response->body()]);
+                return redirect()->route('clients.list')->withErrors(['error' => 'Failed to fetch clients.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error fetching clients:', ['error' => $e->getMessage()]);
+            return redirect()->route('clients.list')->withErrors(['error' => 'An error occurred while fetching clients.']);
+        }
     }
 
     public function archive()
     {
-        // Fetch archived clients from the database or API
-        // Example: Replace this with your actual logic
-        $archivedClients = []; // Replace with actual data fetching logic
+        $apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archieve-clients';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
-        return view('clients.archive', ['archivedClients' => $archivedClients]);
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->get($apiUrl);
+
+            if ($response->successful()) {
+                $archivedClients = $response->json() ?? [];
+            } else {
+                Log::error('Failed to fetch archived clients', ['response' => $response->body()]);
+                $archivedClients = [];
+            }
+        } catch (\Exception $e) {
+            Log::error('Error fetching archived clients:', ['error' => $e->getMessage()]);
+            $archivedClients = [];
+        }
+
+        return view('clients.archive', compact('archivedClients'));
     }
 
     public function addClient(Request $request)
@@ -125,6 +308,61 @@ class ClientController extends Controller
             }
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
+    }
+
+    public function fetchArchivedClients()
+    {
+        $apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archieve-clients';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->get($apiUrl);
+
+            if ($response->successful()) {
+                return $response->json() ?? [];
+            } else {
+                Log::error('Failed to fetch archived clients', ['response' => $response->body()]);
+                return [];
+            }
+        } catch (\Exception $e) {
+            Log::error('Error fetching archived clients:', ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    public function unarchiveClient(Request $request)
+    {
+        $unarchiveUrl = 'http://192.168.1.9:2030/api/Clients/is-archived-client';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $clientId = $request->input('clientId');
+
+            // Log the request data for debugging
+            Log::info('Unarchiving client', ['clientId' => $clientId]);
+
+            if (empty($clientId)) {
+                return redirect()->route('clients.archive')->withErrors(['error' => 'Client ID is missing or invalid.']);
+            }
+
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->put("$unarchiveUrl?isArchived=false&clientId=$clientId");
+
+            if ($response->successful()) {
+                return redirect()->route('clients.archive')->with('success', 'Client unarchived successfully.');
+            } else {
+                Log::error('Failed to unarchive client', ['response' => $response->body()]);
+                return redirect()->route('clients.archive')->withErrors(['error' => 'Failed to unarchive client.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error unarchiving client:', ['error' => $e->getMessage()]);
+            return redirect()->route('clients.archive')->withErrors(['error' => 'An error occurred while unarchiving the client.']);
         }
     }
 }

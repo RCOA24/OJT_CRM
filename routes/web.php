@@ -55,6 +55,18 @@ Route::post('/users/register', [AuthenticatedSessionController::class, 'register
 // List all clients
 Route::get('/clients', [ClientController::class, 'index'])->name('clients.list');
 
+// Fetch all clients
+Route::get('/clients/fetch', [ClientController::class, 'fetchClients'])->name('clients.fetch');
+
+// Search clients
+Route::get('/clients/search', [ClientController::class, 'searchClients'])->name('clients.search');
+
+// Archive a client
+Route::post('/clients/archive', [ClientController::class, 'archiveClient'])->name('clients.archiveClient');
+
+// Filter clients
+Route::get('/clients/filter', [ClientController::class, 'filterClients'])->name('clients.filter');
+
 // View archived clients
 Route::get('/clients/archive', [ClientController::class, 'archive'])->name('clients.archive');
 
@@ -66,6 +78,12 @@ Route::post('/clients/add-client', [ClientController::class, 'addClient'])->name
 
 // View client details
 Route::get('/clients/{id}', [ClientController::class, 'showClient'])->name('clients.show');
+
+// Fetch archived clients
+Route::get('/clients/archived', [ClientController::class, 'fetchArchivedClients'])->name('clients.archived');
+
+// Unarchive a client
+Route::put('/clients/unarchive', [ClientController::class, 'unarchiveClient'])->name('clients.unarchive');
 
 // =========================
 // Task Management Routes

@@ -161,6 +161,7 @@
 });
 
     </script>
-    
+    <script src="{{ asset('js/dropdown.js') }}" defer></script>
+    {{-- <script src="{{ asset('js/search.js') }}" defer></script> --}}
 </body>
 </html>

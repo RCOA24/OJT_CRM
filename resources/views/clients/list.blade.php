@@ -7,22 +7,22 @@
     <div class="container mx-auto bg-white shadow-md rounded-xl p-4 sm:p-8">
         <!-- Flash Message -->
         @if (session('success'))
-            <div class="mb-4 p-4 rounded-lg text-white bg-green-500">
+            <div class="mb-4 p-4 rounded-lg text-white bg-green-500 shadow-md">
                 {{ session('success') }}
             </div>
         @endif
         @if ($errors->any())
-            <div class="mb-4 p-4 rounded-lg text-white bg-red-500">
+            <div class="mb-4 p-4 rounded-lg text-white bg-red-500 shadow-md">
                 {{ $errors->first('error') }}
             </div>
         @endif
         <!-- Flash Message -->
-        <div id="flash-message" class="hidden mb-4 p-4 rounded-lg text-white transition-all duration-500 transform opacity-0 scale-95 "></div>
+        <div id="flash-message" class="hidden mb-4 p-4 rounded-lg text-white bg-[#205375] shadow-md transition-all duration-500 transform opacity-0 scale-95"></div>
         
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-8">
             <h1 class="text-3xl font-extrabold text-gray-800">Client Lists 
-                <span id="client-count" class="text-lg text-gray-500">(0 client lists)</span>
+                <span id="client-count" class="text-lg text-gray-500">({{ count($clients) }} client lists)</span>
             </h1>
             <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mt-4 md:mt-0">
                 <div class="relative">
@@ -30,15 +30,17 @@
                         <x-sorticon class="w-5 h-5 mr-2" /> Sort
                     </button>
                     <div id="sort-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
-                        <button data-sort="asc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
-                            <x-ascending class="w-5 h-5 hover:text-white" /> <span>Ascending</span>
-                        </button>
-                        <button data-sort="desc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
-                            <x-descending class="w-5 h-5 hover:text-white" /> <span>Descending</span>
-                        </button>
-                        <button data-sort="recent" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
-                            <x-recenticon class="w-5 h-5 hover:text-white" /> <span>Recently Added</span>
-                        </button>
+                        <div class="flex flex-col">
+                            <button type="button" data-sort="asc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
+                                <x-ascending class="w-5 h-5 hover:text-white" /> <span>Ascending</span>
+                            </button>
+                            <button type="button" data-sort="desc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
+                                <x-descending class="w-5 h-5 hover:text-white" /> <span>Descending</span>
+                            </button>
+                            <button type="button" data-sort="recent" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
+                                <x-recenticon class="w-5 h-5 hover:text-white" /> <span>Recently Added</span>
+                            </button>
+                        </div>
                     </div>
                 </div>  
                 <div class="relative">
@@ -86,8 +88,7 @@
 
         <!-- Search Bar -->
         <div class="flex flex-col md:flex-row items-center mb-8 space-y-2 md:space-y-0">
-            <input id="search-input" type="text" placeholder="Search" class="flex-1 px-5 py-3 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent shadow-sm" />
-            {{-- <button id="search-button" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-blue-700 shadow-md md:ml-4">Search</button> --}}
+            <input id="search-input" type="text" placeholder="Search by name" class="flex-1 px-5 py-3 text-gray-700 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent shadow-sm" />
         </div>
 
         <!-- Table -->
@@ -103,29 +104,30 @@
                     </tr>
                 </thead>
                 <tbody id="client-table-body" class="divide-y divide-gray-200">
-                    @if (session('clients'))
-                        @foreach (session('clients') as $client)
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 flex items-center">
-                                    <img src="{{ $client['photoLink'] ?? asset('images/adminprofile.svg') }}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
-                                    <a href="{{ route('clients.show', ['id' => $client['clientId']]) }}" class="text-blue-500 hover:underline">
-                                        {{ $client['fullName'] ?? 'N/A' }}
-                                    </a>
-                                </td>
-                                <td class="px-6 py-4 text-gray-600">{{ $client['email'] ?? 'N/A' }}</td>
-                                <td class="px-6 py-4 text-gray-600">{{ $client['phoneNumber'] ?? 'N/A' }}</td>
-                                <td class="px-6 py-4 text-gray-600">{{ $client['companyName'] ?? 'N/A' }}</td>
-                                <td class="px-6 py-4 flex items-center space-x-4">
-                                    <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
-                                    <button class="text-red-500 hover:underline archive-button" data-id="{{ $client['clientId'] }}">Archive</button>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
+                    @forelse ($clients as $client)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 flex items-center">
+                                <img src="{{ $client['photoLink'] ?? asset('images/adminprofile.svg') }}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                                <a href="{{ route('clients.show', ['id' => $client['clientId']]) }}" class="text-blue-500 hover:underline">
+                                    {{ $client['fullName'] ?? 'N/A' }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 text-gray-600">{{ $client['email'] ?? 'N/A' }}</td>
+                            <td class="px-6 py-4 text-gray-600">{{ $client['phoneNumber'] ?? 'N/A' }}</td>
+                            <td class="px-6 py-4 text-gray-600">{{ $client['companyName'] ?? 'N/A' }}</td>
+                            <td class="px-6 py-4 flex items-center space-x-4">
+                                <form method="POST" action="{{ route('clients.archiveClient') }}" onsubmit="return confirm('Are you sure you want to archive this client?');">
+                                    @csrf
+                                    <input type="hidden" name="clientId" value="{{ $client['clientId'] }}">
+                                    <button type="submit" class="text-red-500 hover:underline">Archive</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">No clients found.</td>
                         </tr>
-                    @endif
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -133,69 +135,50 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        const apiUrl = 'http://192.168.1.9:2030/api/Clients/all-clients';
-        const searchUrl = 'http://192.168.1.9:2030/api/Clients/search-client';
-        const archiveUrl = 'http://192.168.1.9:2030/api/Clients/is-archived-client'; // Updated endpoint
-        const tableBody = document.getElementById('client-table-body');
-        const clientCount = document.getElementById('client-count');
-        const sortDropdown = document.getElementById('sort-dropdown');
-        const sortButton = document.getElementById('sort-button');
+    document.addEventListener('DOMContentLoaded', () => {
         const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
-        const industryFilter = document.getElementById('industry-filter');
-        const leadSourceFilter = document.getElementById('lead-source-filter');
+        const clientTableBody = document.getElementById('client-table-body');
+        let allClients = @json($clients);
 
-        let allClients = [];
-
-        async function fetchClients(url) {
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P'
-                    }
-                });
-                const data = await response.json();
-                return data.items || []; // Adjust to match the "items" array in the API response
-            } catch (error) {
-                console.error('Error fetching clients:', error);
-                return [];
-            }
-        }
-
+        // Render clients in the table
         function renderClients(clients) {
-            tableBody.innerHTML = '';
-            clientCount.textContent = `${clients.length} client lists`; // Update count without parentheses
+            clientTableBody.innerHTML = '';
+
+            if (clients.length === 0) {
+                clientTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No clients found.</td>
+                    </tr>
+                `;
+                return;
+            }
 
             clients.forEach(client => {
-                const row = document.createElement('tr');
-                row.classList.add('hover:bg-gray-50');
-                row.innerHTML = `
-                    <td class="px-6 py-4 flex items-center">
-                        <img src="${client.photoLink || '{{ asset('images/adminprofile.svg') }}'}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
-                        <a href="/clients/${client.clientId}" class="text-blue-500 hover:underline">
-                            ${client.fullName || 'N/A'}
-                        </a>
-                    </td>
-                    <td class="px-6 py-4 text-gray-600">${client.email || 'N/A'}</td>
-                    <td class="px-6 py-4 text-gray-600">${client.phoneNumber || 'N/A'}</td>
-                    <td class="px-6 py-4 text-gray-600">${client.companyName || 'N/A'}</td>
-                    <td class="px-6 py-4 flex items-center space-x-4">
-                        <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
-                        <button class="text-red-500 hover:underline archive-button" data-id="${client.clientId}">Archive</button> <!-- Fixed data-id -->
-                    </td>
+                const row = `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 flex items-center">
+                            <img src="${client.photoLink || '{{ asset('images/adminprofile.svg') }}'}" alt="Profile" class="w-10 h-10 rounded-full mr-3">
+                            <a href="/clients/${client.clientId}" class="text-blue-500 hover:underline">
+                                ${client.fullName || 'N/A'}
+                            </a>
+                        </td>
+                        <td class="px-6 py-4 text-gray-600">${client.email || 'N/A'}</td>
+                        <td class="px-6 py-4 text-gray-600">${client.phoneNumber || 'N/A'}</td>
+                        <td class="px-6 py-4 text-gray-600">${client.companyName || 'N/A'}</td>
+                        <td class="px-6 py-4 flex items-center space-x-2">
+                            <form method="POST" action="/clients/archive" class="inline-block" onsubmit="return confirm('Are you sure you want to archive this client?');">
+                                <input type="hidden" name="clientId" value="${client.clientId}">
+                                <button type="submit" class="text-red-500 hover:underline">Archive</button>
+                            </form>
+                        </td>
+                    </tr>
                 `;
-                tableBody.appendChild(row);
+                clientTableBody.insertAdjacentHTML('beforeend', row);
             });
         }
 
-        // Fetch and display all clients on page load
-        allClients = await fetchClients(`${apiUrl}?ascending=true&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`);
-        renderClients(allClients);
-
-        // Search functionality triggered on input
-        async function handleSearch() {
+        // Handle search input
+        function handleSearch() {
             const query = searchInput.value.trim().toLowerCase();
             if (query.length > 0) {
                 const searchResults = allClients.filter(client => client.fullName.toLowerCase().startsWith(query));
@@ -204,8 +187,6 @@
                 renderClients(allClients); // Reset to all clients if search is empty
             }
         }
-
-        searchInput.addEventListener('input', debounce(handleSearch, 300));
 
         // Debounce function to limit API calls
         function debounce(func, delay) {
@@ -216,158 +197,7 @@
             };
         }
 
-        // Toggle sort dropdown
-        sortButton.addEventListener('click', () => {
-            sortDropdown.classList.toggle('hidden');
-        });
-
-        // Handle sorting
-        sortDropdown.addEventListener('click', async (event) => {
-            const sortType = event.target.closest('button')?.getAttribute('data-sort'); // Ensure button is targeted
-            if (sortType) {
-                let sortedClients = [];
-                if (sortType === 'asc' || sortType === 'desc') {
-                    sortedClients = await fetchSortedClients(sortType === 'asc');
-                } else if (sortType === 'recent') {
-                    sortedClients = await fetchClients(`${apiUrl}?ascending=false&sortByRecentlyAdded=true&pageNumber=1&pageSize=10`);
-                }
-                renderClients(sortedClients);
-
-                // Show flash message for the selected sort option
-                const sortMessage = sortType === 'asc' ? 'Sorted by Ascending' :
-                                    sortType === 'desc' ? 'Sorted by Descending' :
-                                    'Sorted by Recently Added';
-                showFlashMessage(sortMessage, 'success');
-
-                // Keep the dropdown open for better UX
-                sortDropdown.classList.remove('hidden');
-            }
-        });
-
-        // Function to fetch sorted clients
-        async function fetchSortedClients(ascending) {
-            return await fetchClients(`${apiUrl}?ascending=${ascending}&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`);
-        }
-
-        function showFlashMessage(message, type) {
-            const flashMessage = document.getElementById('flash-message');
-            flashMessage.textContent = message;
-            flashMessage.className = `mb-4 p-4 rounded-lg text-white transition-all duration-500 transform ${
-                type === 'success' ? 'bg-green-500' : 'bg-red-500'
-            } opacity-0 scale-95`; // Reset animation state
-            flashMessage.classList.remove('hidden');
-            setTimeout(() => {
-                flashMessage.classList.add('opacity-100', 'scale-100'); // Fade in and scale up
-            }, 10); // Slight delay for animation to apply
-
-            setTimeout(() => {
-                flashMessage.classList.remove('opacity-100', 'scale-100'); // Fade out and scale down
-                flashMessage.classList.add('opacity-0', 'scale-95');
-                setTimeout(() => {
-                    flashMessage.classList.add('hidden'); // Hide after animation
-                }, 500); // Match the duration of the fade-out animation
-            }, 3000); // Display for 3 seconds
-        }
-
-        // Archive functionality
-        tableBody.addEventListener('click', async (event) => {
-            const button = event.target.closest('.archive-button'); // Ensure the button is targeted
-            if (button) {
-                const clientId = button.getAttribute('data-id'); // Retrieve the client ID
-                if (!clientId) {
-                    showFlashMessage('Client ID not found.', 'error');
-                    console.error('Archive button clicked, but client ID is missing.');
-                    return;
-                }
-                try {
-                    console.log(`Attempting to archive client with ID: ${clientId}`);
-                    const response = await fetch(`${archiveUrl}?isArchived=true&clientId=${clientId}`, { // Updated query parameters
-                        method: 'PUT',
-                        headers: {
-                            'Accept': 'application/json',
-                            'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P', // Ensure this token is valid
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        showFlashMessage('Client archived successfully!', 'success');
-                        console.log(`Client with ID ${clientId} archived successfully.`);
-                        allClients = await fetchClients(`${apiUrl}?ascending=true&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`); // Reload data
-                        renderClients(allClients); // Refresh the list
-                    } else {
-                        const errorData = await response.json(); // Parse error response
-                        console.error('Error response from server:', errorData);
-                        showFlashMessage(`Failed to archive client: ${errorData.message || 'Unknown error'}`, 'error');
-                    }
-                } catch (error) {
-                    console.error('Error occurred while archiving client:', error);
-                    showFlashMessage('An error occurred while archiving the client. Please try again.', 'error');
-                }
-            }
-        });
-
-        // Filter functionality
-        function applyFilters() {
-            const selectedIndustry = industryFilter.value;
-            const selectedLeadSource = leadSourceFilter.value;
-
-            const filteredClients = allClients.filter(client => {
-                const industryMatch = selectedIndustry ? client.companyDetails?.industryType === selectedIndustry : true;
-                const leadSourceMatch = selectedLeadSource ? client.clientDetails?.leadSources === selectedLeadSource : true;
-                return industryMatch && leadSourceMatch;
-            });
-
-            renderClients(filteredClients);
-        }
-
-        // Attach event listeners to filters
-        industryFilter.addEventListener('change', applyFilters);
-        leadSourceFilter.addEventListener('change', applyFilters);
-
-        document.addEventListener('visibilitychange', async () => {
-            if (document.visibilityState === 'visible') {
-                allClients = await fetchClients(`${apiUrl}?ascending=true&sortByRecentlyAdded=false&pageNumber=1&pageSize=10`); // Reload data
-                renderClients(allClients); // Refresh the list
-            }
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const filterButton = document.getElementById('filter-button');
-        const filterDropdown = document.getElementById('filter-dropdown');
-
-        // Toggle filter dropdown visibility
-        filterButton.addEventListener('click', () => {
-            filterDropdown.classList.toggle('hidden');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', (event) => {
-            if (!filterButton.contains(event.target) && !filterDropdown.contains(event.target)) {
-                filterDropdown.classList.add('hidden');
-            }
-        });
-
-        // Maintain existing filter functionality
-        const industryFilter = document.getElementById('industry-filter');
-        const leadSourceFilter = document.getElementById('lead-source-filter');
-
-        function applyFilters() {
-            const selectedIndustry = industryFilter.value;
-            const selectedLeadSource = leadSourceFilter.value;
-
-            const filteredClients = allClients.filter(client => {
-                const industryMatch = selectedIndustry ? client.companyDetails?.industryType === selectedIndustry : true;
-                const leadSourceMatch = selectedLeadSource ? client.clientDetails?.leadSources === selectedLeadSource : true;
-                return industryMatch && leadSourceMatch;
-            });
-
-            renderClients(filteredClients);
-        }
-
-        industryFilter.addEventListener('change', applyFilters);
-        leadSourceFilter.addEventListener('change', applyFilters);
+        searchInput.addEventListener('input', debounce(handleSearch, 300));
     });
 </script>
 @endsection
