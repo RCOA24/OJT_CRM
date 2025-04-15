@@ -96,23 +96,7 @@ class ClientController extends Controller
             Log::info('Archive client response', ['status' => $response->status(), 'body' => $response->body()]);
 
             if ($response->successful() && $response->body() !== '"Client not found"') {
-                // Fetch the updated client list
-                $clientsResponse = Http::withHeaders([
-                    'Authorization' => $authorization,
-                    'Accept' => 'application/json',
-                ])->get('http://192.168.1.9:2030/api/Clients/all-clients', [
-                    'pageNumber' => 1,
-                    'pageSize' => 10,
-                    'ascending' => 'true',
-                    'sortByRecentlyAdded' => 'false',
-                ]);
-
-                $clients = $clientsResponse->successful() ? $clientsResponse->json('items') ?? [] : [];
-
-                return view('clients.list', [
-                    'clients' => $clients,
-                    'success' => 'Client archived successfully.',
-                ]);
+                return redirect()->route('clients.list')->with('success', 'Client archived successfully.');
             } else {
                 Log::error('Failed to archive client', ['response' => $response->body()]);
                 return redirect()->route('clients.list')->withErrors(['error' => 'Failed to archive client.']);

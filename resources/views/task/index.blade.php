@@ -70,7 +70,10 @@
                                 </span>
                             </td>   
                             <td class="py-3 md:py-4 px-4 md:px-6">
-                                <button class="text-red-500 hover:underline">Delete</button>
+                                <div class="flex items-center space-x-2">
+                                    <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                                    <button class="text-red-500 hover:underline">Archive</button>
+                                </div>
                             </td>
                         </tr>
                         @endforeach

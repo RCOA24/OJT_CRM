@@ -53,8 +53,12 @@
                             <td class="px-6 py-4 flex items-center space-x-2">
                                 <form method="POST" action="{{ route('clients.unarchive') }}" onsubmit="return confirm('Are you sure you want to unarchive this client?');">
                                     @csrf
+                                    @method('PUT')
                                     <input type="hidden" name="clientId" value="{{ $client['clientId'] }}">
-                                    <button type="submit" class="text-red-500 hover:underline">Unarchive</button>
+                                    <div class="flex items-center space-x-2">
+                                        <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                                        <button type="submit" class="text-red-500 hover:underline">Unarchive</button>
+                                    </div>
                                 </form>
                             </td>
                         </tr>
