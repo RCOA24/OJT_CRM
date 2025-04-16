@@ -15,9 +15,11 @@
             </h1>
             <div class="flex space-x-4">
                 <!-- New Buttons -->
-                <button class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
-                    <x-overviewicon class="w-5 h-5 mr-2" /> Overview
-                </button>
+                <button 
+                    class="flex items-center px-5 py-3 rounded-lg relative transition-colors duration-300 shadow-md"
+                    x-bind:class="activeItem.includes('/clients/details') ? 'bg-white text-[#102B3C] font-medium' : 'bg-[#205375] text-white hover:bg-[#102B3C] hover:text-white'"
+                >
+                    <x-overviewicon class="w-5 h-5 mr-2" x-bind:class="activeItem.includes('/clients/details') ? 'text-[#102B3C]' : 'text-white'" /> Overview
                 <button class="bg-[#205375] text-white px-5 py-3 rounded-lg border border-gray-300 hover:bg-[#102B3C] flex items-center shadow-md">
                     <x-editicon1 class="w-5 h-5 mr-2" /> Edit
                 </button>

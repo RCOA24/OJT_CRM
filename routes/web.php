@@ -89,6 +89,11 @@ Route::get('/clients/archived', [ClientController::class, 'fetchArchivedClients'
 // Unarchive a client
 Route::put('/clients/unarchive', [ClientController::class, 'unarchiveClient'])->name('clients.unarchive');
 
+// Edit client (show edit form)
+Route::get('/clients/{id}/edit', [ClientController::class, 'editClient'])->name('clients.edit');
+// Update client (handle form submission)
+Route::put('/clients/{id}', [ClientController::class, 'updateClient'])->name('clients.update');
+
 // =========================
 // Task Management Routes
 // =========================

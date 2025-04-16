@@ -116,10 +116,10 @@
         <!-- Profile & Logout -->
         <div class="p-4 mt-auto border-t">
             <div class="flex items-center space-x-3">
-                <img src="{{ asset('images/mervs.png') }}" class="w-10 h-10 rounded-full">
+                <img src="{{ asset('images/cha.jpg') }}" class="w-10 h-10 rounded-full">
                 <div :class="open ? 'block' : 'hidden'">
-                    <h4 class="text-sm font-semibold text-white">Mervin Dayandante</h4>
-                    <p class="text-xs text-gray-500 text-white">mervzzzd@gmail.com</p>
+                    <h4 class="text-sm font-semibold text-white">Charles Austria</h4>
+                    <p class="text-xs text-gray-500 text-white">rcoa69@gmail.com</p>
                 </div>
             </div>
             <div x-data="{ loggingOut: false }">

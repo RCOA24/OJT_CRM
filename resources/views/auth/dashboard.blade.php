@@ -34,7 +34,7 @@
 
         <!-- Welcome Banner -->
         <div class="bg-gradient-to-r from-[#102B3C] to-[#205375] text-white rounded-xl shadow-xl p-6 mb-6 backdrop-blur-md">
-            <h1 class="text-3xl font-extrabold">Welcome back, Mervin!</h1>
+            <h1 class="text-3xl font-extrabold">Welcome back, Charles!</h1>
             <p class="text-sm opacity-90">Here's a quick overview of your sales performance and activities.</p>
         </div>
 

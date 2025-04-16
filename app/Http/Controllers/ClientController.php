@@ -332,4 +332,33 @@ class ClientController extends Controller
             return redirect()->route('clients.archive')->withErrors(['error' => 'An error occurred while unarchiving the client.']);
         }
     }
+
+    public function editClient($id)
+    {
+        $apiUrl = "http://192.168.1.9:2030/api/Clients/client-info/{$id}";
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => 'application/json',
+            ])->get($apiUrl);
+
+            if ($response->successful()) {
+                $client = $response->json()[0] ?? null;
+
+                if (!$client) {
+                    return back()->withErrors(['error' => 'Client not found.']);
+                }
+
+                // Pass an 'editMode' flag to the view
+                return view('clients.client-details', ['client' => $client, 'editMode' => true]);
+            } else {
+                $errorMessage = $response->json('message') ?? 'Failed to fetch client details.';
+                return back()->withErrors(['error' => $errorMessage]);
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
+    }
 }
