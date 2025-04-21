@@ -268,6 +268,33 @@ class ClientController extends Controller
                     return back()->withErrors(['error' => 'Client not found.']);
                 }
 
+                // Only reconstruct if missing (for backward compatibility)
+                if (!isset($client['contactPerson']) || !is_array($client['contactPerson'])) {
+                    $client['contactPerson'] = [[
+                        'contactName' => $client['contactName'] ?? '',
+                        'jobTitle' => $client['jobTitle'] ?? '',
+                        'department' => $client['department'] ?? '',
+                        'directEmail' => $client['directEmail'] ?? '',
+                        'directPhone' => $client['directPhoneNumber'] ?? '',
+                    ]];
+                }
+                if (!isset($client['companyDetails']) || !is_array($client['companyDetails'])) {
+                    $client['companyDetails'] = [
+                        'companyName' => $client['companyName'] ?? '',
+                        'industryType' => $client['industryType'] ?? '',
+                        'businessRegNumber' => $client['businessRegNumber'] ?? '',
+                        'companySize' => $client['companySize'] ?? '',
+                        'companyAddress' => $client['companyAddress'] ?? '',
+                    ];
+                }
+                if (!isset($client['clientDetails']) || !is_array($client['clientDetails'])) {
+                    $client['clientDetails'] = [
+                        'leadSources' => $client['leadSources'] ?? '',
+                        'clientType' => $client['clientType'] ?? '',
+                        'notes' => $client['notes'] ?? [],
+                    ];
+                }
+
                 return view('clients.client-details', ['client' => $client]);
             } else {
                 $errorMessage = $response->json('message') ?? 'Failed to fetch client details.';
@@ -351,7 +378,23 @@ class ClientController extends Controller
                     return back()->withErrors(['error' => 'Client not found.']);
                 }
 
-                // Pass an 'editMode' flag to the view
+                // Reconstruct nested arrays for view compatibility
+                $client['contactPerson'] = [[
+                    'contactName' => $client['contactName'] ?? '',
+                    'jobTitle' => $client['jobTitle'] ?? '',
+                    'department' => $client['department'] ?? '',
+                    'directEmail' => $client['directEmail'] ?? '',
+                    'directPhone' => $client['directPhoneNumber'] ?? '',
+                ]];
+                $client['companyDetails'] = [
+                    'companyName' => $client['companyName'] ?? '',
+                    'industryType' => $client['industryType'] ?? '',
+                    'businessRegNumber' => $client['businessRegNumber'] ?? '',
+                    'companySize' => $client['companySize'] ?? '',
+                    'companyAddress' => $client['companyAddress'] ?? '',
+                ];
+
+                // Pass the 'editMode' flag to the view
                 return view('clients.client-details', ['client' => $client, 'editMode' => true]);
             } else {
                 $errorMessage = $response->json('message') ?? 'Failed to fetch client details.';
@@ -359,6 +402,83 @@ class ClientController extends Controller
             }
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
+    }
+
+    public function updateClient(Request $request, $id)
+    {
+        $apiUrl = "http://192.168.1.9:2030/api/Clients/update-client/{$id}";
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $data = [
+                'photoLink' => $request->input('photoLink', ''),
+                'fullName' => $request->input('fullName'),
+                'phoneNumber' => $request->input('phoneNumber'),
+                'email' => $request->input('email'),
+                'websiteURL' => $request->input('websiteURL'),
+                'contactName' => $request->input('contactName'),
+                'jobTitle' => $request->input('jobTitle'),
+                'department' => $request->input('department'),
+                'directEmail' => $request->input('directEmail'),
+                'directPhoneNumber' => $request->input('directPhoneNumber'),
+                'companyName' => $request->input('companyName'),
+                'industryType' => $request->input('industryType'),
+                'businessRegNumber' => $request->input('businessRegNumber'),
+                'companySize' => $request->input('companySize'),
+                'companyAddress' => $request->input('companyAddress'),
+            ];
+
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => '*/*',
+                'Content-Type' => 'application/json',
+            ])->put($apiUrl, $data);
+
+            if ($response->successful()) {
+                return redirect()->route('clients.show', $id)->with('success', 'Client updated successfully.');
+            } else {
+                $errorMessage = $response->json('message') ?? 'Failed to update client.';
+                return back()->withErrors(['error' => $errorMessage]);
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
+        }
+    }
+
+    public function addNoteToClient(Request $request, $id)
+    {
+        $apiUrl = "http://192.168.1.9:2030/api/Clients/add-notes-to-client/{$id}";
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $noteContent = $request->input('noteContent');
+
+            if (empty($noteContent)) {
+                return back()->withErrors(['error' => 'Note content cannot be empty.']);
+            }
+
+            // Log the note content for debugging
+            Log::info('Adding note to client', ['clientId' => $id, 'content' => $noteContent]);
+
+            // Send the note content as a raw JSON string
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => '*/*',
+                'Content-Type' => 'application/json',
+            ])->withBody(json_encode($noteContent), 'application/json')->post($apiUrl);
+
+            if ($response->successful()) {
+                Log::info('Note added successfully', ['response' => $response->json()]);
+                return back()->with('success', 'Note added successfully.');
+            } else {
+                Log::error('Failed to add note', ['response' => $response->body()]);
+                $errorMessage = $response->json('message') ?? 'Failed to add note.';
+                return back()->withErrors(['error' => $errorMessage]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error adding note to client:', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
         }
     }
 }

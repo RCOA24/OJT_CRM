@@ -94,6 +94,9 @@ Route::get('/clients/{id}/edit', [ClientController::class, 'editClient'])->name(
 // Update client (handle form submission)
 Route::put('/clients/{id}', [ClientController::class, 'updateClient'])->name('clients.update');
 
+// Add Note to Client
+Route::post('/clients/{id}/add-note', [ClientController::class, 'addNoteToClient'])->name('clients.addNote');
+
 // =========================
 // Task Management Routes
 // =========================
