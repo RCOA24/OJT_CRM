@@ -412,21 +412,21 @@ class ClientController extends Controller
 
         try {
             $data = [
-                'photoLink' => $request->input('photoLink', ''),
-                'fullName' => $request->input('fullName'),
-                'phoneNumber' => $request->input('phoneNumber'),
-                'email' => $request->input('email'),
-                'websiteURL' => $request->input('websiteURL'),
-                'contactName' => $request->input('contactName'),
-                'jobTitle' => $request->input('jobTitle'),
-                'department' => $request->input('department'),
-                'directEmail' => $request->input('directEmail'),
-                'directPhoneNumber' => $request->input('directPhoneNumber'),
-                'companyName' => $request->input('companyName'),
-                'industryType' => $request->input('industryType'),
-                'businessRegNumber' => $request->input('businessRegNumber'),
-                'companySize' => $request->input('companySize'),
-                'companyAddress' => $request->input('companyAddress'),
+                'photoLink' => $request->input('photoLink', 'string'),
+                'fullName' => $request->input('fullName', 'string'),
+                'phoneNumber' => $request->input('phoneNumber', '09522760698'),
+                'email' => $request->input('email', 'awdaw@gmail.com'),
+                'websiteURL' => $request->input('websiteURL', 'string'),
+                'contactName' => $request->input('contactName', 'string'),
+                'jobTitle' => $request->input('jobTitle', 'string'),
+                'department' => $request->input('department', 'string'),
+                'directEmail' => $request->input('directEmail', 'adawdawd@gmail.com'),
+                'directPhoneNumber' => $request->input('directPhoneNumber', '09241899081'),
+                'companyName' => $request->input('companyName', 'string'),
+                'industryType' => $request->input('industryType', 'string'),
+                'businessRegNumber' => $request->input('businessRegNumber', 'string'),
+                'companySize' => $request->input('companySize', 'string'),
+                'companyAddress' => $request->input('companyAddress', 'www,ggg,ffff,www'),
             ];
 
             $response = Http::withHeaders([
@@ -442,6 +442,7 @@ class ClientController extends Controller
                 return back()->withErrors(['error' => $errorMessage]);
             }
         } catch (\Exception $e) {
+            Log::error('Error updating client:', ['error' => $e->getMessage()]);
             return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
         }
     }
