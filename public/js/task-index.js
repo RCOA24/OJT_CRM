@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const flashMessageText = document.getElementById('flash-message-text');
     const applyFiltersButton = document.getElementById('apply-filters');
     const searchInput = document.getElementById('search-input');
+    const taskTableBody = document.getElementById('task-table-body');
 
     // Toggle sort dropdown visibility
     sortButton.addEventListener('click', () => {
@@ -77,7 +78,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function searchTasks(query) {
         try {
-            const response = await fetch(`/task/search?query=${encodeURIComponent(query)}`);
+            // If the search bar is empty, fetch all tasks with pagination
+            const url = query.length > 0 
+                ? `/task/search?name=${encodeURIComponent(query)}` 
+                : `/task/search?pageNumber=1&pageSize=10`;
+            const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();
                 renderTasks(data.tasks);
@@ -106,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render tasks in the table
     function renderTasks(tasks) {
-        const taskTableBody = document.getElementById('task-table-body');
         taskTableBody.innerHTML = '';
 
         if (tasks.length === 0) {
@@ -145,4 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             taskTableBody.insertAdjacentHTML('beforeend', row);
         });
     }
+
+    // Load all tasks when the page loads
+    searchTasks('');
 });

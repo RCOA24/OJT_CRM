@@ -27,7 +27,7 @@
                     </span>
                     <input type="text" id="search-input" placeholder="Search tasks..." 
                            class="border border-gray-300 rounded-md pl-12 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#205375] 
-                                  placeholder-gray-400 text-gray-700 w-full shadow-sm" autocomplete="off">
+                                  placeholder-gray-400 text-gray-700 w-full shadow-sm" autocomplete="on">
                 </div>
                 <!-- Buttons -->
                 <div class="relative">

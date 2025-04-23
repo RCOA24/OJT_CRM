@@ -48,19 +48,24 @@ class TaskController extends Controller
 
     public function searchTasks(Request $request)
     {
-        $apiUrl = 'http://192.168.1.9:2030/api/Task/search-task';
+        $allTasksApiUrl = 'http://192.168.1.9:2030/api/Task/all-tasks'; // Updated URL
+        $searchApiUrl = 'http://192.168.1.9:2030/api/Task/search-task';
         $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
         try {
             $query = $request->query('name', '');
+            $pageNumber = $request->query('pageNumber', 1);
+            $pageSize = $request->query('pageSize', 10);
 
+            // Fetch all tasks if the query is empty
             if (empty($query)) {
-                // Fetch all tasks if the query is empty
-                $allTasksApiUrl = 'http://192.168.1.9:2030/api/Task/all-tasks';
                 $response = Http::withHeaders([
                     'Authorization' => $token,
                     'Accept' => 'application/json',
-                ])->get($allTasksApiUrl);
+                ])->get($allTasksApiUrl, [
+                    'pageNumber' => $pageNumber,
+                    'pageSize' => $pageSize,
+                ]);
 
                 if ($response->successful()) {
                     $tasks = $response->json('items') ?? [];
@@ -74,7 +79,7 @@ class TaskController extends Controller
             $response = Http::withHeaders([
                 'Authorization' => $token,
                 'Accept' => 'application/json',
-            ])->get($apiUrl, ['name' => $query]);
+            ])->get($searchApiUrl, ['name' => $query]);
 
             if ($response->successful()) {
                 $tasks = $response->json() ?? [];
