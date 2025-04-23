@@ -106,6 +106,12 @@ Route::get('/task', [TaskController::class, 'index'])->name('task');
 Route::get('/task/search', [TaskController::class, 'searchTasks'])->name('task.search');
 // Store tasks
 Route::post('/task/store', [TaskController::class, 'store'])->name('task.store');
+// Fetch sorted tasks
+Route::get('/task/sorted', [TaskController::class, 'fetchSortedTasks'])->name('task.fetchSortedTasks');
+// Apply filters to tasks
+Route::get('/task/filters', [TaskController::class, 'applyFilters'])->name('task.applyFilters');
+// Filter tasks
+Route::get('/task/filter', [TaskController::class, 'filterTasks'])->name('task.filter');
     
 // =========================
 // Include Authentication-Related Routes

@@ -29,7 +29,7 @@
                     <button id="sort-button" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
                         <x-sorticon class="w-5 h-5 mr-2" /> Sort
                     </button>
-                    <div id="sort-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg">
+                    <div id="sort-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
                         <div class="flex flex-col">
                             <button type="button" data-sort="asc" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
                                 <x-ascending class="w-5 h-5 hover:text-white" /> <span>Ascending</span>
@@ -40,19 +40,19 @@
                             <button type="button" data-sort="recent" class="flex items-center space-x-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-[#205375] hover:text-white">
                                 <x-recenticon class="w-5 h-5 hover:text-white" /> <span>Recently Added</span>
                             </button>
-                        </div>
+                        </div>  
                     </div>
                 </div>  
                 <div class="relative">
-                    <button id="filter-button" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md">
+                    <button id="filter-button" class="bg-[#205375] text-white px-5 py-3 rounded-lg hover:bg-[#102B3C] flex items-center shadow-md z-20">
                         <x-filtericon class="w-5 h-5 mr-2" /> Filters
                     </button>
-                    <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg p-4">
+                    <div id="filter-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded-lg shadow-lg p-4 z-20">
                         <div class="mb-4">
                             <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
                                 Filter by Industry <x-filtericonblack class="w-4 h-4 ml-1" />
                             </h3>
-                            <select id="industry-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
+                            <select id="industry-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 relative z-20">
                                 <option value="">Select Industry</option>
                                 <option value="Engineer">Engineer</option>
                                 <option value="Technology">Technology</option>
@@ -62,7 +62,7 @@
                             </select>
                         </div>
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+                            <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center z-20">
                                 Filter by Lead Source  <x-filtericonblack class="w-4 h-4 ml-1" />
                             </h3>
                             <select id="lead-source-filter" class="w-full px-4 py-2 text-gray-700 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600">
@@ -92,9 +92,9 @@
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto overflow-y-auto max-h-96">
             <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-                <thead class="bg-[#205375] text-white">
+                <thead class="bg-[#205375] text-white sticky top-0 z-5">
                     <tr>
                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Full Name</th>
                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Email</th>
@@ -137,9 +137,7 @@
     </div>
 </div>
 
-<script>
-    window.allClients = @json($clients);
-</script>
+
 <script src="{{ asset('js/dropdown.js') }}" defer></script>
 <script src="{{ asset('js/clients.js') }}"></script>
 @endsection

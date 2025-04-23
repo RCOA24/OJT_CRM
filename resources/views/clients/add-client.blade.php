@@ -244,9 +244,15 @@
                         
                         <div>
                             <label for="industryType" class="block text-xs font-medium text-[#344054]">Industry type</label>
-                            <input type="text" id="industryType" name="industryType" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="IT Industry">
+                            <select id="industryType" name="industryType" 
+                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                <option value="">Select Industry</option>
+                                <option value="Engineer">Engineer</option>
+                                <option value="Technology">Technology</option>
+                                <option value="IT Department">IT Department</option>
+                                <option value="Basketball">Basketball</option>
+                                <option value="Beverages">Beverages</option>
+                            </select>
                         </div>
                         <div>
                             <label for="businessRegistrationNumber" class="block text-xs font-medium text-[#344054]">Business registration number</label>
@@ -294,9 +300,14 @@
                     <div class="grid grid-cols-1 gap-4">
                         <div>
                             <label for="leadSources" class="block text-xs font-medium text-[#344054]">Lead sources</label>
-                            <input type="text" id="leadSources" name="leadSources" 
-                                   class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm" 
-                                   placeholder="Enter lead sources">
+                            <select id="leadSources" name="leadSources" 
+                                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+                                <option value="">Select Lead Source</option>
+                                <option value="Referral Ads">Referral Ads</option>
+                                <option value="Social Media">Social Media</option>
+                                <option value="Email Campaign">Email Campaign</option>
+                                <option value="Direct Contact">Direct Contact</option>
+                            </select>
                         </div>
                         <div>
                             <label for="clientType" class="block text-xs font-medium text-[#344054]">Client type</label>

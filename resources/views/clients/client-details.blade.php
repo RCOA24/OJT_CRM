@@ -79,7 +79,12 @@
                             </div>
                         </div>
                         <div class="flex items-center">
-                            <label class="w-1/3 text-gray-700 font-semibold">Mobile Number:</label>
+                            <label class="w-1/3 text-gray-700 font-semibold">
+                                Mobile Number:
+                                @error('phoneNumber')
+                                    <span class="text-red-500 text-xs">({{ $message }})</span>
+                                @enderror
+                            </label>
                             <div class="flex items-center w-2/3 bg-gray-50 p-2 rounded-lg shadow-sm">
                                 <x-phonedetails class="w-5 h-5 mr-4 text-gray-500" />
                                 <span class="text-gray-700" id="phoneNumberLabel">{{ $client['phoneNumber'] }}</span>
@@ -99,7 +104,7 @@
                             <div class="flex items-center w-2/3 bg-gray-50 p-2 rounded-lg shadow-sm">
                                 <x-icondetails class="w-5 h-5 mr-4 text-gray-500" />
                                 <span class="text-blue-600 underline hover:text-blue-500" id="websiteURLLabel">{{ $client['websiteURL'] }}</span>
-                                <input type="url" name="websiteURL" value="{{ $client['websiteURL'] }}" class="hidden text-blue-600 underline bg-white border border-gray-300 rounded-lg p-2 focus:outline-none w-full" id="websiteURLInput" />
+                                <input type="text" name="websiteURL" value="{{ $client['websiteURL'] }}" class="hidden text-blue-600 underline bg-white border border-gray-300 rounded-lg p-2 focus:outline-none w-full" id="websiteURLInput" />
                             </div>
                         </div>
                     </div>
@@ -227,7 +232,12 @@
                                 </div>
                             </div>
                             <div class="flex items-center">
-                                <label class="w-1/3 text-gray-700 font-medium text-sm">Address:</label>
+                                <label class="w-1/3 text-gray-700 font-medium text-sm">
+                                    Address:
+                                    @error('companyAddress')
+                                        <span class="text-red-500 text-xs">({{ $message }})</span>
+                                    @enderror
+                                </label>
                                 <div class="flex items-center w-2/3 bg-gray-50 p-2 rounded-md border border-gray-200">
                                     <x-companyaddressicon class="w-4 h-4 mr-3 text-gray-500" />
                                     <span class="text-gray-800 text-sm ml-3" id="companyAddressLabel">{{ $company['companyAddress'] ?? '' }}</span>

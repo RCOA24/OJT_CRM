@@ -410,30 +410,49 @@ class ClientController extends Controller
         $apiUrl = "http://192.168.1.9:2030/api/Clients/update-client/{$id}";
         $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
+        // Validate the request
+        $request->validate([
+            'phoneNumber' => ['required', 'regex:/^09\d{9}$/', 'size:11'],
+            'companyAddress' => [
+                'required',
+                'string',
+                'regex:/^([^,]*,){3}[^,]*$/',
+            ],
+        ], [
+            'phoneNumber.regex' => 'The mobile number must start with 09 and be 11 digits long.',
+            'companyAddress.regex' => 'The address must include a ZIP code, city, province, and country.',
+        ]);
+
         try {
             $data = [
                 'photoLink' => $request->input('photoLink', 'string'),
                 'fullName' => $request->input('fullName', 'string'),
-                'phoneNumber' => $request->input('phoneNumber', '09522760698'),
-                'email' => $request->input('email', 'awdaw@gmail.com'),
+                'phoneNumber' => $request->input('phoneNumber', '09562525094'),
+                'email' => $request->input('email', 'example@example.com'),
                 'websiteURL' => $request->input('websiteURL', 'string'),
                 'contactName' => $request->input('contactName', 'string'),
                 'jobTitle' => $request->input('jobTitle', 'string'),
                 'department' => $request->input('department', 'string'),
-                'directEmail' => $request->input('directEmail', 'adawdawd@gmail.com'),
-                'directPhoneNumber' => $request->input('directPhoneNumber', '09241899081'),
+                'directEmail' => $request->input('directEmail', 'example@example.com'),
+                'directPhoneNumber' => $request->input('directPhoneNumber', '09535251311'),
                 'companyName' => $request->input('companyName', 'string'),
                 'industryType' => $request->input('industryType', 'string'),
                 'businessRegNumber' => $request->input('businessRegNumber', 'string'),
                 'companySize' => $request->input('companySize', 'string'),
-                'companyAddress' => $request->input('companyAddress', 'www,ggg,ffff,www'),
+                'companyAddress' => $request->input('companyAddress', 'string'),
             ];
+
+            // Log the payload
+            Log::info('Update Client Payload:', $data);
 
             $response = Http::withHeaders([
                 'Authorization' => $token,
                 'Accept' => '*/*',
                 'Content-Type' => 'application/json',
             ])->put($apiUrl, $data);
+
+            // Log the API response
+            Log::info('API Response:', ['status' => $response->status(), 'body' => $response->body()]);
 
             if ($response->successful()) {
                 return redirect()->route('clients.show', $id)->with('success', 'Client updated successfully.');
@@ -447,39 +466,4 @@ class ClientController extends Controller
         }
     }
 
-    public function addNoteToClient(Request $request, $id)
-    {
-        $apiUrl = "http://192.168.1.9:2030/api/Clients/add-notes-to-client/{$id}";
-        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
-
-        try {
-            $noteContent = $request->input('noteContent');
-
-            if (empty($noteContent)) {
-                return back()->withErrors(['error' => 'Note content cannot be empty.']);
-            }
-
-            // Log the note content for debugging
-            Log::info('Adding note to client', ['clientId' => $id, 'content' => $noteContent]);
-
-            // Send the note content as a raw JSON string
-            $response = Http::withHeaders([
-                'Authorization' => $token,
-                'Accept' => '*/*',
-                'Content-Type' => 'application/json',
-            ])->withBody(json_encode($noteContent), 'application/json')->post($apiUrl);
-
-            if ($response->successful()) {
-                Log::info('Note added successfully', ['response' => $response->json()]);
-                return back()->with('success', 'Note added successfully.');
-            } else {
-                Log::error('Failed to add note', ['response' => $response->body()]);
-                $errorMessage = $response->json('message') ?? 'Failed to add note.';
-                return back()->withErrors(['error' => $errorMessage]);
-            }
-        } catch (\Exception $e) {
-            Log::error('Error adding note to client:', ['error' => $e->getMessage()]);
-            return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
-        }
-    }
 }

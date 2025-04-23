@@ -29,9 +29,9 @@
         </div>
 
         <!-- Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-h-96 overflow-y-auto">
             <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-                <thead class="bg-[#205375] text-white">
+                <thead class="bg-[#205375] text-white sticky top-0 z-10">
                     <tr>
                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Full Name</th>
                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Email</th>
