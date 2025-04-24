@@ -73,7 +73,7 @@ class ClientController extends Controller
     {
         $archiveUrl = 'http://192.168.1.9:2030/api/Clients/is-archived-client';
         $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
-
+        
         try {
             $clientId = $request->input('clientId');
 

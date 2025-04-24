@@ -115,12 +115,11 @@
         </div>
 
         <!-- Task Table -->
-        <div class="overflow-x-auto rounded-xl shadow">
-            <table class="min-w-full bg-white">
-                <thead class="bg-[#205375] border-b">
+        <div class="overflow-x-auto overflow-y-auto max-h-96">
+            <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+                <thead class="bg-[#205375] border-b sticky top-0 z-5">
                     <tr class="text-left text-sm md:text-base font-medium text-white">
                         <th class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></th>
-                        <th class="py-3 md:py-4 px-4 md:px-6">ID</th> <!-- Changed from Task ID to ID -->
                         <th class="py-3 md:py-4 px-4 md:px-6">Task Title</th>
                         <th class="py-3 md:py-4 px-4 md:px-6">Task Type</th>
                         <th class="py-3 md:py-4 px-4 md:px-6">Assigned To</th>
@@ -134,7 +133,6 @@
                     @forelse ($tasks as $task)
                         <tr class="text-sm md:text-base text-[#444444] hover:bg-gray-200 transition duration-200 ease-in-out">
                             <td class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></td>
-                            <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['id'] ?? 'N/A' }}</td> <!-- Use 'id' and handle missing values -->
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['taskTitle'] }}</td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['taskType'] }}</td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['assignedTo'] }}</td>
@@ -160,7 +158,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="py-3 md:py-4 px-4 md:px-6 text-center text-gray-500">No tasks available.</td>
+                            <td colspan="8" class="py-3 md:py-4 px-4 md:px-6 text-center text-gray-500">No tasks available.</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -100,24 +100,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle search input
-    searchInput.addEventListener('input', function () {
-        const query = this.value.trim();
-        searchTasks(query);
-    });
+    async function handleSearch() {
+        const query = searchInput.value.trim();
 
-    async function searchTasks(query) {
         try {
-            const response = await fetch(`/task/search?query=${encodeURIComponent(query)}`);
+            const url = query.length > 0 
+                ? `/task/search?name=${encodeURIComponent(query)}`
+                : `/task/search?pageNumber=1&pageSize=10`;
+
+            const response = await fetch(url);
+
             if (response.ok) {
                 const data = await response.json();
                 renderTasks(data.tasks || []);
             } else {
-                console.error('Failed to fetch search results.');
+                console.error('Failed to fetch tasks.');
             }
         } catch (error) {
-            console.error('Error fetching search results:', error);
+            console.error('Error fetching tasks:', error);
         }
     }
+
+    // Debounce function to limit API calls
+    function debounce(func, delay) {
+        let timeout;
+        return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    searchInput.addEventListener('input', debounce(handleSearch, 300));
 
     // Fetch tasks with sorting
     async function fetchSortedTasks(ascending) {
@@ -136,34 +149,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render tasks in the table
     function renderTasks(tasks) {
-        const taskTableBody = document.getElementById('task-table-body');
         taskTableBody.innerHTML = '';
 
         if (tasks.length === 0) {
             taskTableBody.innerHTML = `
                 <tr>
-                    <td colspan="9" class="py-3 md:py-4 px-4 md:px-6 text-center text-gray-500">No tasks available.</td>
+                    <td colspan="8" class="py-3 md:py-4 px-4 md:px-6 text-center text-gray-500">No tasks available.</td>
                 </tr>
             `;
             return;
         }
 
         tasks.forEach(task => {
+            const statusClass = task.status.toLowerCase() === 'in progress' || task.status.toLowerCase() === 'in-progress'
+                ? 'bg-green-100 text-green-700'
+                : (task.status.toLowerCase() === 'pending'
+                    ? 'bg-yellow-100 text-yellow-700'
+                    : 'bg-blue-100 text-blue-700');
+
             const row = `
                 <tr class="text-sm md:text-base text-gray-700 hover:bg-gray-50 transition">
                     <td class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></td>
-                    <td class="py-3 md:py-4 px-4 md:px-6">${task.id}</td>
                     <td class="py-3 md:py-4 px-4 md:px-6">${task.taskTitle}</td>
                     <td class="py-3 md:py-4 px-4 md:px-6">${task.taskType}</td>
                     <td class="py-3 md:py-4 px-4 md:px-6">${task.assignedTo}</td>
                     <td class="py-3 md:py-4 px-4 md:px-6">${task.priority}</td>
                     <td class="py-3 md:py-4 px-4 md:px-6">${new Date(task.dueDate).toLocaleString()}</td>
                     <td class="py-3 md:py-4 px-4 md:px-6">
-                        <span class="px-3 py-1 rounded-full text-sm md:text-base font-medium 
-                            ${task.status.toLowerCase() === 'in progress' || task.status.toLowerCase() === 'in-progress' ? 'bg-green-100 text-green-700' : (task.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700')}">
+                        <span class="px-3 py-1 rounded-full text-sm md:text-base font-medium ${statusClass}">
                             ${task.status}
                         </span>
-                    </td>   
+                    </td>
                     <td class="py-3 md:py-4 px-4 md:px-6">
                         <div class="flex items-center space-x-2">
                             <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />

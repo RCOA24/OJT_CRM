@@ -45,7 +45,7 @@
             <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
                 <thead class="bg-[#205375] text-white sticky top-0 z-10">
                     <tr>
-                        <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Task ID</th>
+                        
                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Task Title</th>
                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Task Type</th>
                         <th class="px-6 py-4 text-left font-semibold uppercase tracking-wider">Assigned To</th>
@@ -58,7 +58,7 @@
                 <tbody id="archived-task-table-body" class="divide-y divide-gray-200">
                     @forelse ($archivedTasks as $task)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 text-gray-600">{{ $task['id'] }}</td>
+                          
                             <td class="px-6 py-4 text-gray-600">{{ $task['taskTitle'] }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $task['taskType'] }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $task['assignedTo'] }}</td>

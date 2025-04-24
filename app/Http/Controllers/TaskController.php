@@ -62,6 +62,7 @@ class TaskController extends Controller
             $pageNumber = $request->query('pageNumber', 1);
             $pageSize = $request->query('pageSize', 10);
 
+            // If the query is empty, fetch all tasks with pagination
             if (empty($query)) {
                 $response = Http::withHeaders([
                     'Authorization' => $token,
@@ -75,10 +76,12 @@ class TaskController extends Controller
                     $tasks = $response->json('items') ?? [];
                     return response()->json(['tasks' => $tasks]);
                 } else {
+                    Log::error('Failed to fetch all tasks', ['status' => $response->status(), 'body' => $response->body()]);
                     return response()->json(['tasks' => []], 500);
                 }
             }
 
+            // If a query is provided, perform a search
             $response = Http::withHeaders([
                 'Authorization' => $token,
                 'Accept' => 'application/json',
@@ -88,9 +91,11 @@ class TaskController extends Controller
                 $tasks = $response->json() ?? [];
                 return response()->json(['tasks' => $tasks]);
             } else {
+                Log::error('Failed to search tasks', ['status' => $response->status(), 'body' => $response->body()]);
                 return response()->json(['tasks' => []], 500);
             }
         } catch (\Exception $e) {
+            Log::error('Error searching tasks:', ['error' => $e->getMessage()]);
             return response()->json(['tasks' => []], 500);
         }
     }

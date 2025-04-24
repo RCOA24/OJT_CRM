@@ -8,34 +8,52 @@
         <!-- Modal Body -->
         <form id="create-task-form" method="POST" action="{{ route('task.store') }}" class="px-6 py-4">
             @csrf
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="taskID" class="block text-sm font-medium text-gray-700">Task ID</label>
-                    <input type="text" name="taskID" id="taskID" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="taskTitle" class="block text-sm font-medium text-gray-700">Task Title</label>
-                    <input type="text" name="taskTitle" id="taskTitle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <input type="text" name="taskTitle" id="taskTitle" placeholder="Enter task title"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
                     <label for="taskType" class="block text-sm font-medium text-gray-700">Task Type</label>
-                    <input type="text" name="taskType" id="taskType" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <select name="taskType" id="taskType"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" disabled selected>Select task type</option>
+                        <option value="Call">Call</option>
+                        <option value="Email">Email</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="Follow-up">Follow-up</option>
+                    </select>
                 </div>
                 <div>
                     <label for="assignedTo" class="block text-sm font-medium text-gray-700">Assigned To</label>
-                    <input type="text" name="assignedTo" id="assignedTo" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <input type="text" name="assignedTo" id="assignedTo" placeholder="Enter assignee"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
                     <label for="priority" class="block text-sm font-medium text-gray-700">Priority</label>
-                    <input type="text" name="priority" id="priority" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <select name="priority" id="priority"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" disabled selected>Select priority</option>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
                 </div>
                 <div>
                     <label for="dueDate" class="block text-sm font-medium text-gray-700">Due Date & Time</label>
-                    <input type="datetime-local" name="dueDate" id="dueDate" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <input type="datetime-local" name="dueDate" id="dueDate"
+                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
                     <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
-                    <input type="text" name="status" id="status" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <select name="status" id="status"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" disabled selected>Select status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
                 </div>
             </div>
             <!-- Modal Footer -->
