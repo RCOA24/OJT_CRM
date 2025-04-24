@@ -9,11 +9,17 @@
 <div class="flex-1 p-4 sm:p-6 bg-[#F9FAFB] pt-20">
     <div class="container mx-auto bg-white shadow-md rounded-xl p-4 sm:p-8">
         <!-- Flash Message -->
-        <div id="flash-message" class="hidden mb-4">
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <span id="flash-message-text"></span>
+        @if (session('success'))
+            <div id="flash-message" class="mb-4 p-4 rounded-lg text-white bg-green-500 shadow-lg animate-slide-in">
+                <div class="flex items-center justify-between">
+                    <span>{{ session('success') }}</span>
+                    <button id="close-flash" class="text-white hover:text-gray-200 focus:outline-none">
+                        <x-cancelicon class="w-5 h-5" />
+                    </button>
+                </div>
             </div>
-        </div>
+        @endif
+      
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 space-y-4 md:space-y-0">
             <h1 class="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800">
@@ -62,7 +68,7 @@
                                 <option value="Call">Call</option>
                                 <option value="Email">Email</option>
                                 <option value="Meeting">Meeting</option>
-                                <option value="Follow-up">Follow-up</option>
+                                <option value="Follow-up">Follow-up</option> <!-- Ensure "Follow-up" matches API expectations -->
                             </select>
                         </div>
                         <div class="mb-4">
@@ -96,7 +102,7 @@
                                 <option value="Completed">Completed</option>
                             </select>
                         </div>
-                        <button id="apply-filters" class="bg-[#205375] text-white px-4 py-2 rounded-md hover:bg-[#102B3C] w-full shadow-md" onclick="applyFilters()">
+                        <button id="apply-filters" class="bg-[#205375] text-white px-4 py-2 rounded-md hover:bg-[#102B3C] w-full shadow-md">
                             Apply Filters
                         </button>
                     </div>
@@ -114,7 +120,7 @@
                 <thead class="bg-[#205375] border-b">
                     <tr class="text-left text-sm md:text-base font-medium text-white">
                         <th class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></th>
-                        <th class="py-3 md:py-4 px-4 md:px-6">Task ID</th>
+                        <th class="py-3 md:py-4 px-4 md:px-6">ID</th> <!-- Changed from Task ID to ID -->
                         <th class="py-3 md:py-4 px-4 md:px-6">Task Title</th>
                         <th class="py-3 md:py-4 px-4 md:px-6">Task Type</th>
                         <th class="py-3 md:py-4 px-4 md:px-6">Assigned To</th>
@@ -128,7 +134,7 @@
                     @forelse ($tasks as $task)
                         <tr class="text-sm md:text-base text-[#444444] hover:bg-gray-200 transition duration-200 ease-in-out">
                             <td class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></td>
-                            <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['taskID'] }}</td>
+                            <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['id'] ?? 'N/A' }}</td> <!-- Use 'id' and handle missing values -->
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['taskTitle'] }}</td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['taskType'] }}</td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['assignedTo'] }}</td>
@@ -144,7 +150,7 @@
                                 <form method="POST" action="{{ route('task.archiveTask') }}" onsubmit="return confirm('Are you sure you want to archive this task?');">
                                     @csrf
                                     @method('PUT')
-                                    <input type="hidden" name="taskId" value="{{ $task['id'] }}"> <!-- Use 'taskId' and the numeric 'id' -->
+                                    <input type="hidden" name="taskId" value="{{ $task['id'] }}"> <!-- Use 'id' for archiving -->
                                     <div class="flex items-center space-x-2">
                                         <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
                                         <button type="submit" class="text-red-500 hover:underline">Archive</button>

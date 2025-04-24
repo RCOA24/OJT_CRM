@@ -14,6 +14,8 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
+    
     <style>
 /* Loader Container */
 .loader-container {
@@ -162,6 +164,6 @@
 
     </script>
    
-    {{-- <script src="{{ asset('js/search.js') }}" defer></script> --}}
+    <script src="{{ asset('js/flash-message.js') }}" defer></script>
 </body>
 </html>

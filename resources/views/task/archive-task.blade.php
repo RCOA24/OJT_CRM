@@ -9,13 +9,23 @@
     <div class="container mx-auto bg-white shadow-md rounded-xl p-4 sm:p-8">    
         <!-- Flash Message -->
         @if (session('success'))
-            <div class="mb-4 p-4 rounded-lg text-white bg-green-500">
-                {{ session('success') }}
+            <div id="flash-message" class="mb-4 p-4 rounded-lg text-white bg-green-500 shadow-lg animate-slide-in">
+                <div class="flex items-center justify-between">
+                    <span>{{ session('success') }}</span>
+                    <button id="close-flash" class="text-white hover:text-gray-200 focus:outline-none">
+                        <x-cancelicon class="w-5 h-5" />
+                    </button>
+                </div>
             </div>
         @endif
         @if ($errors->any())
-            <div class="mb-4 p-4 rounded-lg text-white bg-red-500">
-                {{ $errors->first('error') }}
+            <div id="flash-message" class="mb-4 p-4 rounded-lg text-white bg-red-500 shadow-lg animate-slide-in">
+                <div class="flex items-center justify-between">
+                    <span>{{ $errors->first('error') }}</span>
+                    <button id="close-flash" class="text-white hover:text-gray-200 focus:outline-none">
+                        <x-cancelicon class="w-5 h-5" />
+                    </button>
+                </div>
             </div>
         @endif
 
@@ -48,7 +58,7 @@
                 <tbody id="archived-task-table-body" class="divide-y divide-gray-200">
                     @forelse ($archivedTasks as $task)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 text-gray-600">{{ $task['taskID'] }}</td>
+                            <td class="px-6 py-4 text-gray-600">{{ $task['id'] }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $task['taskTitle'] }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $task['taskType'] }}</td>
                             <td class="px-6 py-4 text-gray-600">{{ $task['assignedTo'] }}</td>

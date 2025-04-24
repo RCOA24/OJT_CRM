@@ -122,8 +122,8 @@ Route::put('/task/archive-task', [TaskController::class, 'archiveTask'])->name('
 // Fetch all archived tasks
 Route::get('/task/archived', [TaskController::class, 'fetchArchivedTasks'])->name('task.fetchArchivedTasks');
 // Archive a task by ID
+Route::post('/task/render-tasks', [TaskController::class, 'renderTasks'])->name('task.renderTasks');
 
-    
 // =========================
 // Include Authentication-Related Routes
 // =========================

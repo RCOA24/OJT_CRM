@@ -1,0 +1,36 @@
+/* Flash Message Animation */
+@keyframes slide-in {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.5s ease-out;
+}
+
+/* Flash Message Styling */
+#flash-message {
+    position: relative;
+    font-size: 1rem;
+    font-weight: 500;
+    border-left: 4px solid white;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+#flash-message button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+#flash-message button:hover {
+    transform: scale(1.1);
+}
