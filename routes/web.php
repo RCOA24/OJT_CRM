@@ -112,6 +112,17 @@ Route::get('/task/sorted', [TaskController::class, 'fetchSortedTasks'])->name('t
 Route::get('/task/filters', [TaskController::class, 'applyFilters'])->name('task.applyFilters');
 // Filter tasks
 Route::get('/task/filter', [TaskController::class, 'filterTasks'])->name('task.filter');
+// Archived tasks page
+Route::get('/task/archive', [TaskController::class, 'archive'])->name('task.archive');
+// Unarchive a task
+Route::put('/task/unarchive', [TaskController::class, 'unarchive'])->name('task.unarchive');
+// Archive a task
+Route::put('/task/archive-task', [TaskController::class, 'archiveTask'])->name('task.archiveTask');
+
+// Fetch all archived tasks
+Route::get('/task/archived', [TaskController::class, 'fetchArchivedTasks'])->name('task.fetchArchivedTasks');
+// Archive a task by ID
+
     
 // =========================
 // Include Authentication-Related Routes

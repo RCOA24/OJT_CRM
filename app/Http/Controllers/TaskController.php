@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -137,13 +138,14 @@ class TaskController extends Controller
         $apiUrl = 'http://192.168.1.9:2030/api/Task/filter-tasks';
         $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
-        $filters = [
-            'taskType' => $request->query('taskType', ''),
-            'priority' => $request->query('priority', ''),
-            'dueDateFrom' => $request->query('dueDateFrom', ''),
-            'dueDateTo' => $request->query('dueDateTo', ''),
-            'status' => $request->query('status', ''),
-        ];
+        // Collect only non-empty filters to reduce query size
+        $filters = array_filter([
+            'taskType' => $request->query('TaskType'),
+            'priority' => $request->query('Priority'),
+            'dueDateFrom' => $request->query('StartDate'),
+            'dueDateTo' => $request->query('EndDate'),
+            'status' => $request->query('Status'),
+        ]);
 
         try {
             $response = Http::withHeaders([
@@ -198,6 +200,124 @@ class TaskController extends Controller
             return response()->json(['tasks' => $tasks]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'An error occurred while fetching filtered tasks.'], 500);
+        }
+    }
+
+    public function archive()
+    {
+        $apiUrl = 'http://192.168.1.9:2030/api/Task/all-archive-tasks';
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => 'application/json',
+            ])->get($apiUrl);
+
+            if ($response->successful()) {
+                $archivedTasks = $response->json() ?? [];
+                return view('task.archive-task', compact('archivedTasks'));
+            } else {
+                return back()->withErrors(['error' => 'Failed to fetch archived tasks.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error fetching archived tasks:', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'An error occurred while fetching archived tasks.']);
+        }
+    }
+
+    public function archiveTask(Request $request)
+    {
+        $archiveUrl = 'http://192.168.1.9:2030/api/Task/is-archive-task';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $taskId = $request->input('taskId'); // Retrieve the numeric 'id'
+
+            // Log the request data for debugging
+            Log::info('Archiving task', ['taskId' => $taskId]);
+
+            if (empty($taskId)) {
+                return redirect()->route('task')->withErrors(['error' => 'Task ID is missing or invalid.']);
+            }
+
+            // Send the request with query parameters
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->put("$archiveUrl?isArchived=true&taskId=$taskId");
+
+            // Log the API response for debugging
+            Log::info('Archive task response', ['status' => $response->status(), 'body' => $response->body()]);
+
+            if ($response->successful()) {
+                return redirect()->route('task')->with('success', 'Task archived successfully.');
+            } else {
+                Log::error('Failed to archive task', ['response' => $response->body()]);
+                return redirect()->route('task')->withErrors(['error' => 'Failed to archive task.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error archiving task:', ['error' => $e->getMessage()]);
+            return redirect()->route('task')->withErrors(['error' => 'An error occurred while archiving the task.']);
+        }
+    }
+
+    public function fetchArchivedTasks()
+    {
+        $apiUrl = 'http://192.168.1.9:2030/api/Task/all-archive-tasks';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->get($apiUrl);
+
+            if ($response->successful()) {
+                return $response->json() ?? [];
+            } else {
+                Log::error('Failed to fetch archived tasks', ['response' => $response->body()]);
+                return [];
+            }
+        } catch (\Exception $e) {
+            Log::error('Error fetching archived tasks:', ['error' => $e->getMessage()]);
+            return [];
+        }
+    }
+
+    public function unarchive(Request $request)
+    {
+        $unarchiveUrl = 'http://192.168.1.9:2030/api/Task/is-archive-task';
+        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $taskId = $request->input('taskId'); // Retrieve the numeric 'id'
+
+            // Log the request data for debugging
+            Log::info('Unarchiving task', ['taskId' => $taskId]);
+
+            if (empty($taskId)) {
+                return redirect()->route('task.archive')->withErrors(['error' => 'Task ID is missing or invalid.']);
+            }
+
+            // Send the request with query parameters
+            $response = Http::withHeaders([
+                'Authorization' => $authorization,
+                'Accept' => 'application/json',
+            ])->put("$unarchiveUrl?isArchived=false&taskId=$taskId");
+
+            // Log the API response for debugging
+            Log::info('Unarchive task response', ['status' => $response->status(), 'body' => $response->body()]);
+
+            if ($response->successful()) {
+                return redirect()->route('task.archive')->with('success', 'Task unarchived successfully.');
+            } else {
+                Log::error('Failed to unarchive task', ['response' => $response->body()]);
+                return redirect()->route('task.archive')->withErrors(['error' => 'Failed to unarchive task.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error unarchiving task:', ['error' => $e->getMessage()]);
+            return redirect()->route('task.archive')->withErrors(['error' => 'An error occurred while unarchiving the task.']);
         }
     }
 }

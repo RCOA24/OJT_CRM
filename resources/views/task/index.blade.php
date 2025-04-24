@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="window.location.href='{{ route('clients.archive') }}'" class="bg-[#205375] text-white px-5 py-3 rounded-md  hover:bg-[#102B3C] flex items-center shadow-md">
+                <button onclick="window.location.href='{{ route('task.archive') }}'" class="bg-[#205375] text-white px-5 py-3 rounded-md hover:bg-[#102B3C] flex items-center shadow-md">
                     <x-archiveicon class="w-5 h-5 mr-2" /> Archive
                 </button>
                 <div class="relative">
@@ -125,8 +125,7 @@
                     </tr>
                 </thead>
                 <tbody id="task-table-body">
-                    @if (!empty($tasks) && count($tasks) > 0)
-                        @foreach ($tasks as $task)
+                    @forelse ($tasks as $task)
                         <tr class="text-sm md:text-base text-[#444444] hover:bg-gray-200 transition duration-200 ease-in-out">
                             <td class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $task['taskID'] }}</td>
@@ -140,89 +139,30 @@
                                     {{ strtolower($task['status']) == 'in progress' || strtolower($task['status']) == 'in-progress' ? 'bg-green-100 text-green-700' : (strtolower($task['status']) == 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700') }}">
                                     {{ $task['status'] }}
                                 </span>
-                            </td>   
-                            <td class="py-3 md:py-4 px-4 md:px-6">
-                                <div class="flex items-center space-x-2">
-                                    <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
-                                    <button class="text-red-500 hover:underline">Archive</button>
-                                </div>
+                            </td>
+                            <td class="py-3 md:py-4 px-4 md:px-6 flex items-center space-x-2">
+                                <form method="POST" action="{{ route('task.archiveTask') }}" onsubmit="return confirm('Are you sure you want to archive this task?');">
+                                    @csrf
+                                    @method('PUT')
+                                    <input type="hidden" name="taskId" value="{{ $task['id'] }}"> <!-- Use 'taskId' and the numeric 'id' -->
+                                    <div class="flex items-center space-x-2">
+                                        <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
+                                        <button type="submit" class="text-red-500 hover:underline">Archive</button>
+                                    </div>
+                                </form>
                             </td>
                         </tr>
-                        @endforeach
-                    @else
+                    @empty
                         <tr>
                             <td colspan="9" class="py-3 md:py-4 px-4 md:px-6 text-center text-gray-500">No tasks available.</td>
                         </tr>
-                    @endif
+                    @endforelse
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const searchInput = document.getElementById('search-input');
-        const taskTableBody = document.getElementById('task-table-body');
-
-        async function searchTasks(query) {
-            try {
-                const response = await fetch(`/task/search?name=${encodeURIComponent(query)}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    renderTasks(data.tasks);
-                } else {
-                    console.error('Failed to fetch search results.');
-                }
-            } catch (error) {
-                console.error('Error fetching search results:', error);
-            }
-        }
-
-        function renderTasks(tasks) {
-            taskTableBody.innerHTML = '';
-
-            if (tasks.length === 0) {
-                taskTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="py-3 md:py-4 px-4 md:px-6 text-center text-gray-500">No tasks available.</td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tasks.forEach(task => {
-                const row = `
-                    <tr class="text-sm md:text-base text-gray-700 hover:bg-gray-50 transition">
-                        <td class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></td>
-                        <td class="py-3 md:py-4 px-4 md:px-6">${task.taskID}</td>
-                        <td class="py-3 md:py-4 px-4 md:px-6">${task.taskTitle}</td>
-                        <td class="py-3 md:py-4 px-4 md:px-6">${task.taskType}</td>
-                        <td class="py-3 md:py-4 px-4 md:px-6">${task.assignedTo}</td>
-                        <td class="py-3 md:py-4 px-4 md:px-6">${task.priority}</td>
-                        <td class="py-3 md:py-4 px-4 md:px-6">${new Date(task.dueDate).toLocaleString()}</td>
-                        <td class="py-3 md:py-4 px-4 md:px-6">
-                            <span class="px-3 py-1 rounded-full text-sm md:text-base font-medium 
-                                ${task.status.toLowerCase() === 'in progress' || task.status.toLowerCase() === 'in-progress' ? 'bg-green-100 text-green-700' : (task.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700')}">
-                                ${task.status}
-                            </span>
-                        </td>   
-                        <td class="py-3 md:py-4 px-4 md:px-6">
-                            <div class="flex items-center space-x-2">
-                                <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
-                                <button class="text-red-500 hover:underline">Archive</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-                taskTableBody.insertAdjacentHTML('beforeend', row);
-            });
-        }
-
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.trim();
-            searchTasks(query);
-        });
-    });
-</script>
+<!-- Include external JavaScript file -->
+<script src="{{ asset('js/task-index.js') }}"></script>
 @endsection

@@ -10,27 +10,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskTableBody = document.getElementById('task-table-body');
 
     // Toggle sort dropdown visibility
-    sortButton.addEventListener('click', () => {
+    sortButton.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent event from propagating to the document
         sortDropdown.classList.toggle('hidden');
-    });
-
-    // Close sort dropdown when clicking outside
-    document.addEventListener('click', (event) => {
-        if (!sortButton.contains(event.target) && !sortDropdown.contains(event.target)) {
-            sortDropdown.classList.add('hidden');
-        }
+        filterDropdown.classList.add('hidden'); // Ensure filter dropdown is closed
     });
 
     // Toggle filter dropdown visibility
-    filterButton.addEventListener('click', () => {
+    filterButton.addEventListener('click', (event) => {
+        event.stopPropagation(); // Prevent event from propagating to the document
         filterDropdown.classList.toggle('hidden');
+        sortDropdown.classList.add('hidden'); // Ensure sort dropdown is closed
     });
 
-    // Close filter dropdown when clicking outside
-    document.addEventListener('click', (event) => {
-        if (!filterButton.contains(event.target) && !filterDropdown.contains(event.target)) {
-            filterDropdown.classList.add('hidden');
-        }
+    // Close both dropdowns when clicking outside
+    document.addEventListener('click', () => {
+        sortDropdown.classList.add('hidden');
+        filterDropdown.classList.add('hidden');
+    });
+
+    // Prevent dropdowns from closing when clicking inside them
+    sortDropdown.addEventListener('click', (event) => {
+        event.stopPropagation();
+    });
+
+    filterDropdown.addEventListener('click', (event) => {
+        event.stopPropagation();
     });
 
     // Handle sort button clicks
@@ -49,6 +54,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Handle "Archive" button clicks
+    taskTableBody.addEventListener('click', async (event) => {
+        if (event.target.classList.contains('archive-button')) {
+            const taskId = event.target.dataset.taskId;
+
+            if (confirm('Are you sure you want to archive this task?')) {
+                try {
+                    const response = await fetch(`http://192.168.1.9:2030/api/Task/is-archive-task?isArchived=true&taskId=${taskId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
+                            'Accept': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        const result = await response.json();
+                        alert(result.message || 'Task archived successfully.');
+                        // Optionally, reload the tasks or remove the archived task from the table
+                        searchTasks('');
+                    } else {
+                        alert('Failed to archive the task.');
+                    }
+                } catch (error) {
+                    console.error('Error archiving task:', error);
+                    alert('An error occurred while archiving the task.');
+                }
+            }
+        }
+    });
+
     // Handle filter application
     applyFiltersButton.addEventListener('click', async () => {
         const taskType = document.getElementById('task-type-filter').value;
@@ -57,11 +93,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const dueDateTo = document.getElementById('due-date-to').value;
         const status = document.getElementById('status-filter').value;
 
+        // Build query parameters dynamically, excluding empty values
+        const queryParams = new URLSearchParams();
+        if (taskType) queryParams.append('TaskType', taskType);
+        if (priority) queryParams.append('Priority', priority);
+        if (dueDateFrom) queryParams.append('StartDate', dueDateFrom);
+        if (dueDateTo) queryParams.append('EndDate', dueDateTo);
+        if (status) queryParams.append('Status', status);
+
         try {
-            const response = await fetch(`/task/filter?TaskType=${taskType}&Priority=${priority}&StartDate=${dueDateFrom}&EndDate=${dueDateTo}&Status=${status}`);
+            const response = await fetch(`/task/filter?${queryParams.toString()}`);
             if (response.ok) {
                 const data = await response.json();
                 renderTasks(data.tasks);
+
+                // Show flash message with selected filter criteria
+                const appliedFilters = [];
+                if (taskType) appliedFilters.push(`Task Type: ${taskType}`);
+                if (priority) appliedFilters.push(`Priority: ${priority}`);
+                if (dueDateFrom) appliedFilters.push(`Start Date: ${dueDateFrom}`);
+                if (dueDateTo) appliedFilters.push(`End Date: ${dueDateTo}`);
+                if (status) appliedFilters.push(`Status: ${status}`);
+
+                flashMessageText.textContent = appliedFilters.length > 0
+                    ? `Filters applied: ${appliedFilters.join(', ')}`
+                    : 'No filters applied.';
+                flashMessage.classList.remove('hidden');
+                setTimeout(() => {
+                    flashMessage.classList.add('hidden');
+                }, 3000); // Hide after 3 seconds
             } else {
                 console.error('Failed to apply filters.');
             }
@@ -78,11 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function searchTasks(query) {
         try {
-            // If the search bar is empty, fetch all tasks with pagination
-            const url = query.length > 0 
-                ? `/task/search?name=${encodeURIComponent(query)}` 
-                : `/task/search?pageNumber=1&pageSize=10`;
-            const response = await fetch(url);
+            const response = await fetch(`/task/search?name=${encodeURIComponent(query)}`);
             if (response.ok) {
                 const data = await response.json();
                 renderTasks(data.tasks);
@@ -141,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td class="py-3 md:py-4 px-4 md:px-6">
                         <div class="flex items-center space-x-2">
                             <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
-                            <button class="text-red-500 hover:underline">Archive</button>
+                            <button class="archive-button text-red-500 hover:underline" data-task-id="${task.taskID}">Archive</button>
                         </div>
                     </td>
                 </tr>
