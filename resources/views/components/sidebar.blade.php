@@ -69,15 +69,29 @@
             </a>
 
             <!-- Clients -->
-            <a href="{{ route('clients.list') }}" 
-                class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300"
-                x-bind:class="activeItem.includes('/clients') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'"
-            >
-                <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-                    <x-clientsicon class="w-6 h-6" x-bind:class="activeItem.includes('/clients') ? 'text-[#ED1C24]' : 'text-white'" />
-                </span>
-                <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Clients</span>
-            </a>
+            <div x-data="{ openClients: false }">
+                <a href="{{ route('clients.list') }}" 
+                   class="flex items-center px-4 py-2 rounded-lg relative transition-colors duration-300 cursor-pointer"
+                   x-bind:class="activeItem.includes('/clients') ? 'bg-gray-700 text-[#ED1C24] font-medium' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'">
+                    <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                        <x-clientsicon class="w-6 h-6 text-white" />
+                    </span>
+                    <span x-bind:class="open ? 'ml-2 block' : 'hidden'">Clients</span>
+                    <svg @click.prevent.stop="openClients = !openClients" 
+                         class="w-4 h-4 ml-auto transition-transform transform text-white cursor-pointer" 
+                         :class="openClients ? 'rotate-180' : 'rotate-0'" 
+                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </a>
+                <div x-show="openClients" class="ml-8 mt-2 space-y-2 border-l-2 border-gray-500 pl-4" x-cloak>
+                    <a href="{{ route('leads.index') }}" 
+                       class="block px-4 py-2 rounded-lg text-sm transition-colors duration-300"
+                       x-bind:class="activeItem.includes('/leads') ? 'text-[#ED1C24]' : 'text-white hover:bg-gray-500 hover:text-[#ED1C24]'">
+                        Lead
+                    </a>
+                </div>
+            </div>
 
             <!-- Users -->
             <a href="{{ route('users') }}" 
@@ -161,7 +175,7 @@
                     fill="currentColor"
                 >
                 <path fill-rule="evenodd" 
-                d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" 
+                d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a 1 1 0 010-1.414z" 
                 clip-rule="evenodd"
             />
                 </svg>
@@ -179,12 +193,25 @@
 <!-- Mobile Sidebar (Overlapping Content but Below Navbar) -->  
 <div x-show="mobileOpen" 
     class="fixed top-16 left-0 w-full bg-white shadow-lg z-50 transition-transform transform">
-    
     <nav class="flex flex-col p-4 space-y-3">
         <a href="{{ route('dashboard') }}" class="text-lg font-semibold block">Dashboard</a>
-        <a href="{{ route('clients.list') }}" class="text-lg font-semibold block">Clients</a>
+        <div x-data="{ openClientsMobile: false }">
+            <a href="{{ route('clients.list') }}" 
+               class="text-lg font-semibold block flex items-center justify-between">
+                Clients
+                <svg @click.prevent.stop="openClientsMobile = !openClientsMobile" 
+                     class="w-4 h-4 transition-transform transform text-gray-700 cursor-pointer" 
+                     :class="openClientsMobile ? 'rotate-180' : 'rotate-0'" 
+                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </a>
+            <div x-show="openClientsMobile" class="ml-4 mt-2 space-y-2 border-l-2 border-black pl-4" x-cloak>
+                <a href="{{ route('leads.index') }}" class="text-base font-medium block">Lead</a>
+            </div>
+        </div>
         <a href="{{ route('users') }}" class="text-lg font-semibold block">Users</a>
-        <a href="{{ route('task') }}" class="text-lg font-semibold block">Task</a> <!-- Updated -->
+        <a href="{{ route('task') }}" class="text-lg font-semibold block">Task</a>
         <a href="#" class="text-lg font-semibold block">Notifications</a>
 
         <!-- Log-out Form (Same Function as Button) -->

@@ -47,25 +47,50 @@ class ClientController extends Controller
 
     public function searchClients(Request $request)
     {
-        $searchUrl = 'http://192.168.1.9:2030/api/Clients/search-client';
+        $allClientsApiUrl = 'http://192.168.1.9:2030/api/Clients/all-clients';
+        $searchApiUrl = 'http://192.168.1.9:2030/api/Clients/search-client';
         $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
         try {
             $query = $request->query('query', '');
+            $pageNumber = $request->query('pageNumber', 1);
+            $pageSize = $request->query('pageSize', 10);
+
+            // If the query is empty, fetch all clients with pagination
+            if (empty($query)) {
+                $response = Http::withHeaders([
+                    'Authorization' => $authorization,
+                    'Accept' => 'application/json',
+                ])->get($allClientsApiUrl, [
+                    'pageNumber' => $pageNumber,
+                    'pageSize' => $pageSize,
+                ]);
+
+                if ($response->successful()) {
+                    $clients = $response->json('items') ?? [];
+                    return response()->json(['clients' => $clients]);
+                } else {
+                    Log::error('Failed to fetch all clients', ['status' => $response->status(), 'body' => $response->body()]);
+                    return response()->json(['clients' => []], 500);
+                }
+            }
+
+            // If a query is provided, perform a search
             $response = Http::withHeaders([
                 'Authorization' => $authorization,
                 'Accept' => 'application/json',
-            ])->get($searchUrl, ['query' => $query]);
+            ])->get($searchApiUrl, ['query' => $query]);
 
             if ($response->successful()) {
-                return response()->json($response->json('items') ?? []);
+                $clients = $response->json('items') ?? [];
+                return response()->json(['clients' => $clients]);
             } else {
-                Log::error('Failed to search clients', ['response' => $response->body()]);
-                return response()->json([], 500);
+                Log::error('Failed to search clients', ['status' => $response->status(), 'body' => $response->body()]);
+                return response()->json(['clients' => []], 500);
             }
         } catch (\Exception $e) {
             Log::error('Error searching clients:', ['error' => $e->getMessage()]);
-            return response()->json([], 500);
+            return response()->json(['clients' => []], 500);
         }
     }
 
@@ -157,7 +182,7 @@ class ClientController extends Controller
 
     public function archive()
     {
-        $apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archieve-clients';
+        $apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archive-clients'; // Fixed typo
         $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
         try {
@@ -307,7 +332,7 @@ class ClientController extends Controller
 
     public function fetchArchivedClients()
     {
-        $apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archieve-clients';
+        $apiUrl = 'http://192.168.1.9:2030/api/Clients/all-archive-clients'; // Fixed typo
         $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
         try {
@@ -466,4 +491,66 @@ class ClientController extends Controller
         }
     }
 
+    public function addNoteToClient(Request $request, $clientId)
+    {
+        $apiUrl = "http://192.168.1.9:2030/api/Clients/add-notes-to-client/{$clientId}";
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        $request->validate([
+            'noteContent' => 'required|string|max:1000',
+        ], [
+            'noteContent.required' => 'The note content is required.',
+            'noteContent.max' => 'The note content must not exceed 1000 characters.',
+        ]);
+
+        try {
+            $noteContent = $request->input('noteContent');
+
+            // Log the API URL and payload for debugging
+            Log::info('Adding note to client', [
+                'url' => $apiUrl,
+                'payload' => $noteContent,
+            ]);
+
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])->withBody($noteContent, 'application/json')->post($apiUrl);
+
+            // Log the API response for debugging
+            Log::info('API Response', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            // Check for 201 Created or 200 OK
+            if ($response->status() === 201 || $response->status() === 200) {
+                // Fetch updated client details
+                $clientDetailsResponse = Http::withHeaders([
+                    'Authorization' => $token,
+                    'Accept' => 'application/json',
+                ])->get("http://192.168.1.9:2030/api/Clients/client-info/{$clientId}");
+
+                if ($clientDetailsResponse->successful()) {
+                    $client = $clientDetailsResponse->json()[0] ?? null;
+
+                    if (!$client) {
+                        return back()->withErrors(['error' => 'Client not found.']);
+                    }
+
+                    return redirect()->route('clients.show', $clientId)->with('success', 'Note added successfully.');
+                } else {
+                    Log::error('Failed to fetch updated client details', ['response' => $clientDetailsResponse->body()]);
+                    return back()->withErrors(['error' => 'Note added, but failed to fetch updated client details.']);
+                }
+            } else {
+                Log::error('Failed to add note to client', ['response' => $response->body()]);
+                return back()->withErrors(['error' => 'Failed to add note to the client.']);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error adding note to client:', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'An error occurred while adding the note.']);
+        }
+    }
 }

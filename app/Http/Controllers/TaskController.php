@@ -111,10 +111,9 @@ class TaskController extends Controller
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ])->post($apiUrl, [
-                'taskID' => $request->input('taskID'),
                 'taskTitle' => $request->input('taskTitle'),
                 'taskType' => $request->input('taskType'),
-                'assignedTo' => $request->input('assignedTo'),
+                'clientId' => $request->input('clientId'), // Include clientId
                 'priority' => $request->input('priority'),
                 'dueDate' => $request->input('dueDate'),
                 'status' => $request->input('status'),

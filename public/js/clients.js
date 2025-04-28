@@ -1,13 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
     const clientTableBody = document.getElementById('client-table-body');
-    let allClients = window.allClients || [];
 
     // Render clients in the table
     function renderClients(clients) {
         clientTableBody.innerHTML = '';
 
-        if (clients.length === 0) {
+        if (!clients || clients.length === 0) {
             clientTableBody.innerHTML = `
                 <tr>
                     <td colspan="5" class="px-6 py-4 text-center text-gray-500">No clients found.</td>
@@ -44,13 +43,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Handle search input
-    function handleSearch() {
-        const query = searchInput.value.trim().toLowerCase();
-        if (query.length > 0) {
-            const searchResults = allClients.filter(client => client.fullName.toLowerCase().startsWith(query));
-            renderClients(searchResults);
-        } else {
-            renderClients(allClients); // Reset to all clients if search is empty
+    async function handleSearch() {
+        const query = searchInput.value.trim();
+
+        try {
+            const url = query.length > 0 
+                ? `/clients/search?query=${encodeURIComponent(query)}`
+                : `/clients/search?pageNumber=1&pageSize=10`;
+
+            const response = await fetch(url);
+
+            if (response.ok) {
+                const data = await response.json();
+                renderClients(data.clients || []);
+            } else {
+                console.error('Failed to fetch clients.');
+                renderClients([]);
+            }
+        } catch (error) {
+            console.error('Error fetching clients:', error);
+            renderClients([]);
         }
     }
 

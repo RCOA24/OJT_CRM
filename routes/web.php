@@ -6,8 +6,10 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Log;
 
 // Redirect Home Page to Login
 Route::get('/', function () {
@@ -123,6 +125,10 @@ Route::put('/task/archive-task', [TaskController::class, 'archiveTask'])->name('
 Route::get('/task/archived', [TaskController::class, 'fetchArchivedTasks'])->name('task.fetchArchivedTasks');
 // Archive a task by ID
 Route::post('/task/render-tasks', [TaskController::class, 'renderTasks'])->name('task.renderTasks');
+
+// Lead page route
+Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
+Log::info('Route for leads.index registered.');
 
 // =========================
 // Include Authentication-Related Routes

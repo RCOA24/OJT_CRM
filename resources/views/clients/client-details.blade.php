@@ -125,7 +125,9 @@
                 @foreach ($client['clientDetails']['notes'] ?? [] as $note)
                     <tr class="border-b">
                         <td class="px-4 py-2 text-gray-700 text-sm">{{ $note['content'] }}</td>
-                        <td class="px-4 py-2 text-gray-500 text-sm">{{ \Carbon\Carbon::parse($note['createdAt'])->format('F j, Y g:i A') }}</td>
+                        <td class="px-4 py-2 text-gray-500 text-sm">
+                            {{ isset($note['createdAt']) ? \Carbon\Carbon::parse($note['createdAt'])->format('F j, Y g:i A') : 'N/A' }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

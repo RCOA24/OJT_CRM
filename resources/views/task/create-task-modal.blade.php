@@ -27,8 +27,10 @@
                 </div>
                 <div>
                     <label for="assignedTo" class="block text-sm font-medium text-gray-700">Assigned To</label>
-                    <input type="text" name="assignedTo" id="assignedTo" placeholder="Enter assignee"
-                           class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <select name="clientId" id="assignedTo"
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        <option value="" disabled selected>Loading clients...</option>
+                    </select>
                 </div>
                 <div>
                     <label for="priority" class="block text-sm font-medium text-gray-700">Priority</label>
@@ -78,4 +80,20 @@
         const modal = document.getElementById(modalId);
         modal.classList.toggle('hidden');
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const assignedToDropdown = document.getElementById('assignedTo');
+        fetch('{{ route("clients.fetch") }}?pageNumber=1&pageSize=100')
+            .then(response => response.json())
+            .then(data => {
+                assignedToDropdown.innerHTML = '<option value="" disabled selected>Select a client</option>';
+                data.forEach(client => {
+                    assignedToDropdown.innerHTML += `<option value="${client.clientId}">${client.fullName}</option>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching clients:', error);
+                assignedToDropdown.innerHTML = '<option value="" disabled>Error loading clients</option>';
+            });
+    });
 </script>
