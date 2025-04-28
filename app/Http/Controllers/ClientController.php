@@ -491,9 +491,9 @@ class ClientController extends Controller
         }
     }
 
-    public function addNoteToClient(Request $request, $clientId)
+    public function addNoteToClient(Request $request, $id)
     {
-        $apiUrl = "http://192.168.1.9:2030/api/Clients/add-notes-to-client/{$clientId}";
+        $apiUrl = "http://192.168.1.9:2030/api/Clients/add-notes-to-client/{$id}";
         $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
         $request->validate([
@@ -516,7 +516,9 @@ class ClientController extends Controller
                 'Authorization' => $token,
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
-            ])->withBody($noteContent, 'application/json')->post($apiUrl);
+            ])->post($apiUrl, [
+                'content' => $noteContent,
+            ]);
 
             // Log the API response for debugging
             Log::info('API Response', [
@@ -524,26 +526,8 @@ class ClientController extends Controller
                 'body' => $response->body(),
             ]);
 
-            // Check for 201 Created or 200 OK
             if ($response->status() === 201 || $response->status() === 200) {
-                // Fetch updated client details
-                $clientDetailsResponse = Http::withHeaders([
-                    'Authorization' => $token,
-                    'Accept' => 'application/json',
-                ])->get("http://192.168.1.9:2030/api/Clients/client-info/{$clientId}");
-
-                if ($clientDetailsResponse->successful()) {
-                    $client = $clientDetailsResponse->json()[0] ?? null;
-
-                    if (!$client) {
-                        return back()->withErrors(['error' => 'Client not found.']);
-                    }
-
-                    return redirect()->route('clients.show', $clientId)->with('success', 'Note added successfully.');
-                } else {
-                    Log::error('Failed to fetch updated client details', ['response' => $clientDetailsResponse->body()]);
-                    return back()->withErrors(['error' => 'Note added, but failed to fetch updated client details.']);
-                }
+                return redirect()->route('clients.show', $id)->with('success', 'Note added successfully.');
             } else {
                 Log::error('Failed to add note to client', ['response' => $response->body()]);
                 return back()->withErrors(['error' => 'Failed to add note to the client.']);

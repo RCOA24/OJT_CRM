@@ -62,7 +62,11 @@
                     @forelse ($leads as $lead)
                         <tr class="text-sm md:text-base text-[#444444] hover:bg-gray-200 transition duration-200 ease-in-out">
                             <td class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></td>
-                            <td class="py-3 md:py-4 px-4 md:px-6">{{ $lead['fullName'] ?? 'N/A' }}</td>
+                            <td class="py-3 md:py-4 px-4 md:px-6">
+                                <a href="{{ route('leads.details', ['id' => $lead['leadId'] ?? '']) }}" class="text-blue-500 hover:underline">
+                                    {{ $lead['fullName'] ?? 'N/A' }}
+                                </a>
+                            </td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $lead['email'] ?? 'N/A' }}</td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $lead['phoneNumber'] ?? 'N/A' }}</td>
                             <td class="py-3 md:py-4 px-4 md:px-6">{{ $lead['companyName'] ?? 'N/A' }}</td>

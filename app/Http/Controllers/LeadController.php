@@ -41,4 +41,32 @@ class LeadController extends Controller
                 ->withErrors(['error' => 'An error occurred while fetching leads.']);
         }
     }
+
+    public function show($id)
+    {
+        $apiUrl = "http://192.168.1.9:2030/api/Leads/lead-info/{$id}";
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => 'application/json',
+            ])->get($apiUrl);
+
+            if ($response->successful()) {
+                $lead = $response->json()[0] ?? null;
+
+                if (!$lead) {
+                    return back()->withErrors(['error' => 'Lead not found.']);
+                }
+
+                return view('Lead.leads-details', ['lead' => $lead]);
+            } else {
+                $errorMessage = $response->json('message') ?? 'Failed to fetch lead details.';
+                return back()->withErrors(['error' => $errorMessage]);
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
+    }
 }

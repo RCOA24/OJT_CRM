@@ -130,6 +130,9 @@ Route::post('/task/render-tasks', [TaskController::class, 'renderTasks'])->name(
 Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
 Log::info('Route for leads.index registered.');
 
+// Lead details route
+Route::get('/leads/{id}', [LeadController::class, 'show'])->name('leads.details');
+
 // =========================
 // Include Authentication-Related Routes
 // =========================
