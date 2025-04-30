@@ -87,4 +87,5 @@
         </div>
     </div>
 </div>
+<script src="{{ asset('js/lead-search.js') }}"></script>
 @endsection

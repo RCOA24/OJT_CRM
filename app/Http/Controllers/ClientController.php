@@ -220,9 +220,6 @@ class ClientController extends Controller
                 // Save the uploaded file to a public directory and get its URL
                 $photoPath = $photoUpload->store('uploads', 'public');
                 $photoLink = asset('storage/' . $photoPath);
-
-                // Log the generated photoLink for debugging
-                Log::info('Generated photoLink:', ['photoLink' => $photoLink]);
             }
 
             $response = Http::withHeaders([
