@@ -64,12 +64,12 @@
             </a>
 
             <!-- Total Leads -->
-            <a href="#" 
+            <a href="{{ route('leads.index') }}" 
                class="block transform transition-transform duration-300 hover:scale-105"
-               @click.prevent="activeItem = '/leads'; window.location.href='#'">
+               @click.prevent="activeItem = '/leads'; window.location.href='{{ route('leads.index') }}'">
                 <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 hover:shadow-2xl transition-shadow">
                     <h2 class="text-xs font-semibold text-gray-600">TOTAL LEADS</h2>
-                    <p class="text-3xl font-extrabold text-gray-800">456</p>
+                    <p id="total-leads-count" class="text-3xl font-extrabold text-gray-800">(0)</p> <!-- Updated to use dynamic count -->
                     <p class="text-sm text-green-500 font-semibold">+36% ↑</p>
                 </div>
             </a>

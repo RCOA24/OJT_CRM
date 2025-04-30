@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
@@ -60,13 +61,111 @@ class LeadController extends Controller
                     return back()->withErrors(['error' => 'Lead not found.']);
                 }
 
+                // Ensure the 'deals' array contains the 'dealStatus' field
+                $lead['deals'] = $lead['deals'] ?? [
+                    'dealName' => '',
+                    'assignedSalesRep' => '',
+                    'dealValue' => '',
+                    'currency' => '',
+                    'stage' => '',
+                    'dealStatus' => '', // Add default value for dealStatus
+                ];
+
                 return view('Lead.leads-details', ['lead' => $lead]);
             } else {
                 $errorMessage = $response->json('message') ?? 'Failed to fetch lead details.';
                 return back()->withErrors(['error' => $errorMessage]);
             }
         } catch (\Exception $e) {
+            Log::error('Error fetching lead details:', ['error' => $e->getMessage()]);
             return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
+    }
+
+    public function editLead($id)
+    {
+        $apiUrl = "http://192.168.1.9:2030/api/Leads/lead-info/{$id}";
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => 'application/json',
+            ])->get($apiUrl);
+
+            if ($response->successful()) {
+                $lead = $response->json()[0] ?? null;
+
+                if (!$lead) {
+                    return back()->withErrors(['error' => 'Lead not found.']);
+                }
+
+                // Pass the 'editMode' flag to the view
+                return view('Lead.leads-details', ['lead' => $lead, 'editMode' => true]);
+            } else {
+                $errorMessage = $response->json('message') ?? 'Failed to fetch lead details.';
+                return back()->withErrors(['error' => $errorMessage]);
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred.']);
+        }
+    }
+
+    public function updateLead(Request $request, $id)
+    {
+        $apiUrl = "http://192.168.1.9:2030/api/Leads/update-lead/{$id}";
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        // Validation rules for nullable fields
+        $request->validate([
+            'leadSource' => 'nullable|string',
+            'status' => 'nullable|string',
+            'dealName' => 'nullable|string',
+            'dealValue' => 'nullable|numeric',
+            'currency' => 'nullable|string',
+            'stage' => 'nullable|string',
+            'assignedSalesRep' => 'nullable|string',
+            'dealStatus' => 'nullable|string',
+            'estimatedValue' => 'nullable|numeric',
+            'discount' => 'nullable|numeric',
+            'paymentTerms' => 'nullable|string',
+            'invoiceNumber' => 'nullable|string',
+            'paymentStatus' => 'nullable|string',
+        ]);
+
+        try {
+            // Prepare the data payload
+            $data = $request->only([
+                'leadSource', 'status', 'dealName', 'dealValue', 'currency', 'stage',
+                'assignedSalesRep', 'dealStatus', 'estimatedValue', 'discount',
+                'paymentTerms', 'invoiceNumber', 'paymentStatus'
+            ]);
+
+            // Log the values of status and dealStatus for debugging
+            Log::info('Status Field:', ['status' => $data['status'] ?? 'Not Provided']);
+            Log::info('Deal Status Field:', ['dealStatus' => $data['dealStatus'] ?? 'Not Provided']);
+
+            // Log the entire payload for debugging
+            Log::info('Update Lead Payload:', $data);
+
+            $response = Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => '*/*',
+                'Content-Type' => 'application/json',
+            ])->put($apiUrl, $data);
+
+            // Log the API response
+            Log::info('API Response:', ['status' => $response->status(), 'body' => $response->body()]);
+
+            if ($response->successful()) {
+                return redirect()->route('leads.details', $id)->with('success', 'Lead updated successfully.');
+            } else {
+                $errorMessage = $response->json('message') ?? 'Failed to update lead.';
+                return back()->withErrors(['error' => $errorMessage]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error updating lead:', ['error' => $e->getMessage()]);
+            return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
         }
     }
 }

@@ -128,10 +128,23 @@ Route::post('/task/render-tasks', [TaskController::class, 'renderTasks'])->name(
 
 // Lead page route
 Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
-Log::info('Route for leads.index registered.');
+// Add Lead Modal Page
+Route::get('/leads/add-modal', function () {
+    return view('Lead.add-modal');
+})->name('leads.add-modal');
 
 // Lead details route
 Route::get('/leads/{id}', [LeadController::class, 'show'])->name('leads.details');
+
+// Edit lead (show edit form)
+Route::get('/leads/{id}/edit', [LeadController::class, 'editLead'])->name('leads.edit');
+
+// Update lead (handle form submission)
+Route::put('/leads/{id}', [LeadController::class, 'updateLead'])->name('leads.update');
+
+
+// Store Lead
+Route::post('/leads/store', [LeadController::class, 'store'])->name('leads.store');
 
 // =========================
 // Include Authentication-Related Routes
