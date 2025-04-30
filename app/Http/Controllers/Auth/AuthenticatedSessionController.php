@@ -39,8 +39,13 @@ class AuthenticatedSessionController extends Controller
     if ($response->successful()) {
         $data = $response->json();
 
-        // Store token in session
-        // session(['api_token' => $data['token']]);
+        // Store user info in session for sidebar/profile display
+        session([
+            'firstName' => $data['firstName'] ?? '',
+            'lastName' => $data['lastName'] ?? '',
+            'email' => $data['email'] ?? '',
+            // 'api_token' => $data['token'], // Uncomment if you want to store token
+        ]);
 
         // Flash success message
         return redirect()->route('dashboard')->with('success', 'Login successful!');

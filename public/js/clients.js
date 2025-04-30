@@ -47,15 +47,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = searchInput.value.trim();
 
         try {
-            const url = query.length > 0 
-                ? `/clients/search?query=${encodeURIComponent(query)}`
-                : `/clients/search?pageNumber=1&pageSize=10`;
+            let url;
+            if (query.length > 0) {
+                url = `http://192.168.1.9:2030/api/Clients/search-client?name=${encodeURIComponent(query)}`;
+            } else {
+                // Fetch all clients when search is cleared, with pagination params
+                url = `http://192.168.1.9:2030/api/Clients/all-clients?pageNumber=1&pageSize=100`;
+            }
 
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
+                    'Accept': 'application/json',
+                }
+            });
 
             if (response.ok) {
                 const data = await response.json();
-                renderClients(data.clients || []);
+                // For all-clients endpoint, use data.items; for search, use data or data.items
+                const clients = Array.isArray(data) ? data : (data.items || []);
+                renderClients(clients || []);
             } else {
                 console.error('Failed to fetch clients.');
                 renderClients([]);

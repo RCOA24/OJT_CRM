@@ -132,8 +132,12 @@
             <div class="flex items-center space-x-3">
                 <img src="{{ asset('images/cha.jpg') }}" class="w-10 h-10 rounded-full">
                 <div :class="open ? 'block' : 'hidden'">
-                    <h4 class="text-sm font-semibold text-white">Charles Austria</h4>
-                    <p class="text-xs text-gray-500 text-white">rcoa69@gmail.com</p>
+                    <h4 class="text-sm font-semibold text-white">
+                        {{ session('firstName', 'User') . ' ' . session('lastName', 'Name') }}
+                    </h4>
+                    <p class="text-xs text-gray-500 text-white break-all">
+                        {{ session('email', 'user@email.com') }}
+                    </p>
                 </div>
             </div>
             <div x-data="{ loggingOut: false }">

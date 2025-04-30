@@ -45,54 +45,54 @@ class ClientController extends Controller
         }
     }
 
-    public function searchClients(Request $request)
-    {
-        $allClientsApiUrl = 'http://192.168.1.9:2030/api/Clients/all-clients';
-        $searchApiUrl = 'http://192.168.1.9:2030/api/Clients/search-client';
-        $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+    // public function searchClients(Request $request)
+    // {
+    //     $allClientsApiUrl = 'http://192.168.1.9:2030/api/Clients/all-clients';
+    //     $searchApiUrl = 'http://192.168.1.9:2030/api/Clients/search-client';
+    //     $authorization = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
-        try {
-            $query = $request->query('query', '');
-            $pageNumber = $request->query('pageNumber', 1);
-            $pageSize = $request->query('pageSize', 10);
+    //     try {
+    //         $query = $request->query('query', '');
+    //         $pageNumber = $request->query('pageNumber', 1);
+    //         $pageSize = $request->query('pageSize', 10);
 
-            // If the query is empty, fetch all clients with pagination
-            if (empty($query)) {
-                $response = Http::withHeaders([
-                    'Authorization' => $authorization,
-                    'Accept' => 'application/json',
-                ])->get($allClientsApiUrl, [
-                    'pageNumber' => $pageNumber,
-                    'pageSize' => $pageSize,
-                ]);
+    //         // If the query is empty, fetch all clients with pagination
+    //         if (empty($query)) {
+    //             $response = Http::withHeaders([
+    //                 'Authorization' => $authorization,
+    //                 'Accept' => 'application/json',
+    //             ])->get($allClientsApiUrl, [
+    //                 'pageNumber' => $pageNumber,
+    //                 'pageSize' => $pageSize,
+    //             ]);
 
-                if ($response->successful()) {
-                    $clients = $response->json('items') ?? [];
-                    return response()->json(['clients' => $clients]);
-                } else {
-                    Log::error('Failed to fetch all clients', ['status' => $response->status(), 'body' => $response->body()]);
-                    return response()->json(['clients' => []], 500);
-                }
-            }
+    //             if ($response->successful()) {
+    //                 $clients = $response->json('items') ?? [];
+    //                 return response()->json(['clients' => $clients]);
+    //             } else {
+    //                 Log::error('Failed to fetch all clients', ['status' => $response->status(), 'body' => $response->body()]);
+    //                 return response()->json(['clients' => []], 500);
+    //             }
+    //         }
 
-            // If a query is provided, perform a search
-            $response = Http::withHeaders([
-                'Authorization' => $authorization,
-                'Accept' => 'application/json',
-            ])->get($searchApiUrl, ['query' => $query]);
+    //         // If a query is provided, perform a search
+    //         $response = Http::withHeaders([
+    //             'Authorization' => $authorization,
+    //             'Accept' => 'application/json',
+    //         ])->get($searchApiUrl, ['query' => $query]);
 
-            if ($response->successful()) {
-                $clients = $response->json('items') ?? [];
-                return response()->json(['clients' => $clients]);
-            } else {
-                Log::error('Failed to search clients', ['status' => $response->status(), 'body' => $response->body()]);
-                return response()->json(['clients' => []], 500);
-            }
-        } catch (\Exception $e) {
-            Log::error('Error searching clients:', ['error' => $e->getMessage()]);
-            return response()->json(['clients' => []], 500);
-        }
-    }
+    //         if ($response->successful()) {
+    //             $clients = $response->json('items') ?? [];
+    //             return response()->json(['clients' => $clients]);
+    //         } else {
+    //             Log::error('Failed to search clients', ['status' => $response->status(), 'body' => $response->body()]);
+    //             return response()->json(['clients' => []], 500);
+    //         }
+    //     } catch (\Exception $e) {
+    //         Log::error('Error searching clients:', ['error' => $e->getMessage()]);
+    //         return response()->json(['clients' => []], 500);
+    //     }
+    // }
 
     public function archiveClient(Request $request)
     {
