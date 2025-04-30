@@ -5,7 +5,7 @@
 @include('components.sidebar')
 
 @section('content')
-<div class="flex-1 p-2 sm:p-3 bg-gray-50">
+<div class="flex-1 p-2 sm:p-1 bg-gray-50">
     <div class="pt-20 container mx-auto bg-white shadow-md rounded-lg p-3 sm:p-4 max-w-[calc(100vw-2rem)] overflow-hidden">
         @if(session('success'))
             <div class="mb-3" id="flash-success">
@@ -32,10 +32,27 @@
                     <x-backicon class="w-4 h-4" />
                 </button>Lead & Deal
             </h1>
+            <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                <!-- Search Bar -->
+                <div class="relative w-full sm:w-64">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <x-searchicon class="w-5 h-5 text-[#205375]" />
+                    </span>
+                    <input type="text" id="search-input" placeholder="Search" 
+                           class="border border-gray-300 rounded-lg pl-10 pr-4 py-2 focus:ring-[#205375] focus:border-[#205375] placeholder-gray-400 text-gray-700 shadow-sm w-full">
+                    <div id="search-results" class="absolute z-10 bg-white border border-gray-300 rounded-lg shadow-lg mt-1 w-full hidden">
+                        <!-- Search results will be dynamically populated here -->
+                    </div>
+                </div>
+              
+            </div>
         </div>
+
+        
 
         <form method="POST" action="{{ route('leads.store') }}">
             @csrf
+            <input type="hidden" id="clientIDInput" name="clientID" value="">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <!-- Lead Management Section -->
                 <div class="lg:col-span-2 bg-white p-2 sm:p-4 rounded-2xl shadow-md border">
@@ -44,7 +61,7 @@
                         @foreach (['fullName' => 'Full Name', 'email' => 'Email', 'phoneNumber' => 'Phone', 'companyName' => 'Company Name', 'industry' => 'Industry', 'leadSource' => 'Lead Source', 'status' => 'Status'] as $field => $label)
                             <div>
                                 <label class="block text-xs font-semibold text-gray-600">{{ $label }}</label>
-                                <input id="{{ $field }}Input" type="text" name="{{ $field }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#205375] focus:border-[#205375] text-xs" required>
+                                <input id="{{ $field }}Input" type="text" name="{{ $field }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#205375] focus:border-[#205375] text-xs" required autocomplete="off">
                             </div>
                         @endforeach
                     </div>
@@ -54,7 +71,7 @@
                 <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-md border border-gray-100 flex flex-col h-full">
                     <h3 class="text-lg font-bold text-gray-900 mb-4">Notes & Interaction History</h3>
                     <label class="block text-xs font-semibold text-gray-600 mb-2">Notes</label>
-                    <textarea class="w-full h-40 border border-gray-300 rounded-md p-3 resize-none text-xs" placeholder="Notes..."></textarea>
+                    <textarea class="w-full h-40 border border-gray-300 rounded-md p-3 resize-none text-xs" placeholder="Notes..." name="notes"></textarea>
                 </div>
 
                 <!-- Deal Management Section -->
@@ -91,4 +108,5 @@
         </form>
     </div>
 </div>
+<script src="{{ asset('js/add-leadsSearch.js') }}"></script> 
 @endsection

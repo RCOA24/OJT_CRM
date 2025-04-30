@@ -14,7 +14,7 @@ class LeadController extends Controller
         $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
         $pageNumber = request()->query('pageNumber', 1);
-        $pageSize = request()->query('pageSize', 10);
+        $pageSize = request()->query('pageSize', 100);
 
         try {
             $response = Http::withHeaders([
@@ -166,6 +166,83 @@ class LeadController extends Controller
         } catch (\Exception $e) {
             Log::error('Error updating lead:', ['error' => $e->getMessage()]);
             return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()]);
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $apiUrl = 'http://192.168.1.9:2030/api/Leads/add-leads';
+        $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
+
+        $validated = $request->validate([
+            'leadSource' => 'nullable|string',
+            'status' => 'nullable|string',
+            'clientID' => 'nullable|integer',
+            // Lead Management
+            'fullName' => 'required|string',
+            'email' => 'required|email',
+            'phoneNumber' => 'required|string',
+            'companyName' => 'nullable|string',
+            'industry' => 'nullable|string',
+            // Deal Management
+            'dealName' => 'nullable|string',
+            'dealValue' => 'nullable|numeric',
+            'currency' => 'nullable|string',
+            'stage' => 'nullable|string',
+            'assignedSalesRep' => 'nullable|string',
+            'dealStatus' => 'nullable|string',
+            'notes' => 'nullable|string',
+            // Payment
+            'estimatedValue' => 'nullable|numeric',
+            'discounts' => 'nullable|numeric',
+            'paymentTerms' => 'nullable|string',
+            'invoiceNumber' => 'nullable|string',
+            'paymentStatus' => 'nullable|string',
+        ]);
+
+        // Build the payload for the API
+        $payload = [
+            'leadSource' => $request->input('leadSource'),
+            'status' => $request->input('status'),
+            'clientID' => $request->input('clientID', 0),
+            'fullName' => $request->input('fullName'),
+            'email' => $request->input('email'),
+            'phoneNumber' => $request->input('phoneNumber'),
+            'companyName' => $request->input('companyName'),
+            'industry' => $request->input('industry'),
+            'deals' => [
+                'dealName' => $request->input('dealName'),
+                'dealValue' => $request->input('dealValue', 0),
+                'currency' => $request->input('currency'),
+                'stage' => $request->input('stage'),
+                'assignedSalesRep' => $request->input('assignedSalesRep'),
+                'status' => $request->input('dealStatus'),
+                'notes' => $request->input('notes'),
+            ],
+            'payment' => [
+                'estimatedValue' => $request->input('estimatedValue', 0),
+                'discount' => $request->input('discounts', 0),
+                'paymentTerms' => $request->input('paymentTerms'),
+                'invoiceNumber' => $request->input('invoiceNumber'),
+                'paymentStatus' => $request->input('paymentStatus'),
+            ],
+        ];
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Authorization' => $token,
+                'Accept' => '*/*',
+                'Content-Type' => 'application/json',
+            ])->post($apiUrl, $payload);
+
+            if ($response->successful()) {
+                return redirect()->route('leads.index')->with('success', 'Lead added successfully.');
+            } else {
+                $errorMessage = $response->json('message') ?? 'Failed to add lead.';
+                return back()->withErrors(['error' => $errorMessage])->withInput();
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'An unexpected error occurred: ' . $e->getMessage()])->withInput();
         }
     }
 }
