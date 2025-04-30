@@ -170,25 +170,44 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = `
                 <tr class="text-sm md:text-base text-gray-700 hover:bg-gray-50 transition">
                     <td class="py-3 md:py-4 px-4 md:px-6"><input type="checkbox"></td>
-                    <td class="py-3 md:py-4 px-4 md:px-6">${task.taskTitle}</td>
-                    <td class="py-3 md:py-4 px-4 md:px-6">${task.taskType}</td>
-                    <td class="py-3 md:py-4 px-4 md:px-6">${task.assignedTo}</td>
-                    <td class="py-3 md:py-4 px-4 md:px-6">${task.priority}</td>
-                    <td class="py-3 md:py-4 px-4 md:px-6">${new Date(task.dueDate).toLocaleString()}</td>
+                    <td class="py-3 md:py-4 px-4 md:px-6">${task.taskTitle || ''}</td>
+                    <td class="py-3 md:py-4 px-4 md:px-6">${task.taskType || ''}</td>
+                    <td class="py-3 md:py-4 px-4 md:px-6">${task.assignedTo || ''}</td>
+                    <td class="py-3 md:py-4 px-4 md:px-6">${task.priority || ''}</td>
+                    <td class="py-3 md:py-4 px-4 md:px-6">${task.dueDate ? new Date(task.dueDate).toLocaleString() : ''}</td>
                     <td class="py-3 md:py-4 px-4 md:px-6">
                         <span class="px-3 py-1 rounded-full text-sm md:text-base font-medium ${statusClass}">
-                            ${task.status}
+                            ${task.status || ''}
                         </span>
                     </td>
                     <td class="py-3 md:py-4 px-4 md:px-6">
                         <div class="flex items-center space-x-2">
                             <x-archiveredicon class="w-5 h-5 text-blue-600 hover:text-blue-800" />
-                            <button class="text-red-500 hover:underline">Archive</button>
+                            <button class="archive-task-btn text-red-500 hover:underline" data-task-id="${task.taskId}">Archive</button>
                         </div>
                     </td>
                 </tr>
             `;
             taskTableBody.insertAdjacentHTML('beforeend', row);
+        });
+
+        // Attach click listeners to all archive buttons after rendering
+        document.querySelectorAll('.archive-task-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const taskId = this.getAttribute('data-task-id');
+                if (confirm('Are you sure you want to archive this task?')) {
+                    // Submit archive via POST (adjust the URL and method as needed)
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/task/archive`;
+                    form.innerHTML = `
+                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                        <input type="hidden" name="taskId" value="${taskId}">
+                    `;
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
         });
     }
 });
