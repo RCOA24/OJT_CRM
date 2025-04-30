@@ -61,7 +61,8 @@
                         @foreach (['fullName' => 'Full Name', 'email' => 'Email', 'phoneNumber' => 'Phone', 'companyName' => 'Company Name', 'industry' => 'Industry', 'leadSource' => 'Lead Source', 'status' => 'Status'] as $field => $label)
                             <div>
                                 <label class="block text-xs font-semibold text-gray-600">{{ $label }}</label>
-                                <input id="{{ $field }}Input" type="text" name="{{ $field }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#205375] focus:border-[#205375] text-xs" required autocomplete="off">
+                                <input id="{{ $field }}Input" type="text" name="{{ $field }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#205375] focus:border-[#205375] text-xs"
+                                    @if(in_array($field, ['fullName', 'email', 'phoneNumber'])) required @endif autocomplete="off">
                             </div>
                         @endforeach
                     </div>

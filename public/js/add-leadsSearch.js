@@ -15,7 +15,8 @@ document.getElementById('search-input').addEventListener('input', async function
 
     if (query.length > 2) {
         try {
-            const response = await fetch(`http://192.168.1.9:2030/api/Leads/search-lead?name=${encodeURIComponent(query)}`, {
+            // Use the correct client search endpoint
+            const response = await fetch(`http://192.168.1.9:2030/api/Clients/search-client?name=${encodeURIComponent(query)}`, {
                 headers: {
                     'Authorization': 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P',
                     'Accept': 'application/json',
@@ -23,14 +24,14 @@ document.getElementById('search-input').addEventListener('input', async function
             });
 
             if (response.ok) {
-                const leads = await response.json();
-                if (Array.isArray(leads) && leads.length > 0) {
-                    leads.forEach(lead => {
+                const clients = await response.json();
+                if (Array.isArray(clients) && clients.length > 0) {
+                    clients.forEach(client => {
                         const resultItem = document.createElement('div');
                         resultItem.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer text-xs';
-                        resultItem.textContent = lead.fullName;
+                        resultItem.textContent = client.fullName;
                         resultItem.addEventListener('click', () => {
-                            populateLeadInputs(lead);
+                            populateLeadInputs(client);
                             resultsContainer.classList.add('hidden');
                         });
                         resultsContainer.appendChild(resultItem);
@@ -39,7 +40,7 @@ document.getElementById('search-input').addEventListener('input', async function
                 }
             }
         } catch (error) {
-            console.error('Error fetching leads:', error);
+            console.error('Error fetching clients:', error);
         }
     }
 });
@@ -49,40 +50,28 @@ function sanitizeValue(val) {
     return (val === "N/A" || val === null || val === undefined) ? "" : val;
 }
 
-function populateLeadInputs(lead) {
-    // Remove readonly if set
-    ['fullNameInput', 'emailInput', 'phoneNumberInput', 'companyNameInput', 'industryInput', 'leadSourceInput', 'statusInput'].forEach(id => {
-        const input = document.getElementById(id);
-        if (input) input.removeAttribute('readonly');
-    });
+function populateLeadInputs(client) {
+    console.log('Client object:', client); // Debug: See what data is received
 
-    document.getElementById('fullNameInput').value = sanitizeValue(lead.fullName);
-    document.getElementById('emailInput').value = sanitizeValue(lead.email);
-    document.getElementById('phoneNumberInput').value = sanitizeValue(lead.phoneNumber);
-    document.getElementById('companyNameInput').value = sanitizeValue(lead.companyName);
-    // Use industry from companyDetails if available
-    document.getElementById('industryInput').value = sanitizeValue(
-        (lead.companyDetails && lead.companyDetails.industryType) ? lead.companyDetails.industryType : lead.industry
-    );
-    document.getElementById('leadSourceInput').value = sanitizeValue(lead.leadSource);
-    document.getElementById('statusInput').value = sanitizeValue(lead.status);
-    document.getElementById('clientIDInput').value = sanitizeValue(lead.clientID || lead.clientId);
+    // Defensive: check if element exists before setting value
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = sanitizeValue(val);
+    };
 
-    if (lead.deals) {
-        document.getElementById('dealNameInput').value = sanitizeValue(lead.deals.dealName);
-        document.getElementById('assignedSalesRepInput').value = sanitizeValue(lead.deals.assignedSalesRep);
-        document.getElementById('dealValueInput').value = sanitizeValue(lead.deals.dealValue);
-        document.getElementById('currencyInput').value = sanitizeValue(lead.deals.currency);
-        document.getElementById('stageInput').value = sanitizeValue(lead.deals.stage);
-        document.getElementById('dealStatusInput').value = sanitizeValue(lead.deals.status);
+    setVal('fullNameInput', client.fullName);
+    setVal('emailInput', client.email);
+    setVal('phoneNumberInput', client.phoneNumber);
+    setVal('companyNameInput', client.companyName);
+
+    // Get industryType from companyDetails
+    let industryVal = "";
+    if (client.companyDetails && client.companyDetails.industryType) {
+        industryVal = client.companyDetails.industryType;
     }
-    if (lead.payment) {
-        document.getElementById('paymentTermsInput').value = sanitizeValue(lead.payment.paymentTerms);
-        document.getElementById('discountsInput').value = sanitizeValue(lead.payment.discount);
-        document.getElementById('estimatedValueInput').value = sanitizeValue(lead.payment.estimatedValue);
-        document.getElementById('finalPriceInput').value = sanitizeValue(lead.payment.finalPrice);
-        document.getElementById('invoiceNumberInput').value = sanitizeValue(lead.payment.invoiceNumber);
-        document.getElementById('paymentStatusInput').value = sanitizeValue(lead.payment.paymentStatus);
-    }
+    setVal('industryInput', industryVal);
+
+    // Set clientID hidden input
+    setVal('clientIDInput', client.clientId);
 }
 

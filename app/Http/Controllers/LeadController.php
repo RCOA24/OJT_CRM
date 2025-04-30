@@ -174,7 +174,7 @@ class LeadController extends Controller
         $apiUrl = 'http://192.168.1.9:2030/api/Leads/add-leads';
         $token = 'YRPP4vws97S&BI!#$R9s-)U(Bi-A?hwJKg_#qEeg.DRA/tk:.gva<)BA@<2~hI&P';
 
-        $validated = $request->validate([
+        $request->validate([
             'leadSource' => 'nullable|string',
             'status' => 'nullable|string',
             'clientID' => 'nullable|integer',
@@ -209,7 +209,8 @@ class LeadController extends Controller
             'email' => $request->input('email'),
             'phoneNumber' => $request->input('phoneNumber'),
             'companyName' => $request->input('companyName'),
-            'industry' => $request->input('industry'),
+            // Fix: If industry is "N/A", send as empty string
+            'industry' => ($request->input('industry') === 'N/A') ? '' : $request->input('industry'),
             'deals' => [
                 'dealName' => $request->input('dealName'),
                 'dealValue' => $request->input('dealValue', 0),
@@ -221,6 +222,7 @@ class LeadController extends Controller
             ],
             'payment' => [
                 'estimatedValue' => $request->input('estimatedValue', 0),
+                // Fix: Map discounts to discount
                 'discount' => $request->input('discounts', 0),
                 'paymentTerms' => $request->input('paymentTerms'),
                 'invoiceNumber' => $request->input('invoiceNumber'),
