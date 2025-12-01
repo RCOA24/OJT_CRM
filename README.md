@@ -1,66 +1,67 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Odecci CRM (Internship Project)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Odecci CRM is a web-based customer relationship management system built during an internship at Odecci Solutions Inc.  
+The application helps small teams manage clients, leads, deals, tasks, and sales performance in a single dashboard.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Framework:** Laravel (Blade templating)
+- **Front-End:** HTML, CSS, JavaScript, Tailwind CSS / custom SCSS
+- **Database:** MySQL
+- **Auth & Security:** Laravel authentication, role-based access control (RBAC)
+- **Tools:** GitHub, Laravel artisan, Composer, NPM
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications..
+---
 
-## Learning Laravel
+## Core Features
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Authentication & RBAC**
+  - Login with “remember me” and password reset.
+  - Role-based access (admin, sales, staff) controlling which modules and actions are available.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Dashboard & Reporting**
+  - Sales overview with total clients, total leads, conversion metrics, and pending tasks.
+  - Line chart for income vs expenses and donut chart for sales breakdown.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Client Management**
+  - Client list with search, sort, and archive actions.
+  - Detailed client profile with contact information, company data, notes, and recent activity timeline.
 
-## Laravel Sponsors
+- **Lead & Deal Management**
+  - Lead list with filters (stage, assigned sales rep, date created).
+  - Lead & Deal view for managing lead info, deal value, stage, financial terms, and payment details.
+  - Notes & interaction history panel for tracking communication.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Task Management**
+  - Task list with title, type, assignee, priority, due date, and status.
+  - Filter and sort by priority, status, date range, and task type.
+  - Archive actions for completed or inactive tasks.
 
-### Premium Partners
+- **Notifications**
+  - Basic notification area to keep users updated on system events (e.g., new leads, task updates).
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
+## Screenshots
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+> These are sample UI screenshots from the internship build.
 
-## Code of Conduct
+- Login screen with Odecci branding and HRIS label.  
+- CRM dashboard showing sales overview cards, charts, and navigation sidebar.  
+- Client list and client details pages with contact, company, and notes sections.  
+- Leads, Lead & Deal, and Task pages with filters, status chips, and archive actions.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+<img width="1919" height="968" alt="Leads" src="https://github.com/user-attachments/assets/d8f59189-4ffc-468f-bc01-f7d2d4564fb8" />
+<img width="1919" height="961" alt="LeadDeal" src="https://github.com/user-attachments/assets/c9dcc91f-652d-4e6a-bd57-49d193a158cc" />
+<img width="1919" height="974" alt="Task" src="https://github.com/user-attachments/assets/2cae5733-8978-4790-8b64-73ea63a592ab" />
+<img width="1919" height="974" alt="TaskFiltered" src="https://github.com/user-attachments/assets/774b7abe-2e12-44be-a512-02dedb078ded" />
+<img width="720" height="362" alt="DashboardCRM" src="https://github.com/user-attachments/assets/d1e4a141-d023-43c6-8557-ff77b2d6fcc1" />
+<img width="1919" height="974" alt="ClientLists" src="https://github.com/user-attachments/assets/bb147d3f-589c-4fc6-9783-ae1c5cc698de" />
+<img width="1919" height="1001" alt="OdecciCRMLogin" src="https://github.com/user-attachments/assets/bbff324e-d628-4fe3-954c-3aab7f302f9b" />
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
